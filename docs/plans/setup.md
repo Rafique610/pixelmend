@@ -115,7 +115,7 @@ All four tasks involve multiple hyperparameter optimization trials (Optuna), com
 
 ---
 
-## Step 3: Optuna Storage & Study Conventions
+## ✅ Step 3: Optuna Storage & Study Conventions
 
 ### Scope
 Design and establish a unified Optuna hyperparameter optimization protocol backed by a persistent SQLite database. All studies across Tasks 1 through 4 will share standard storage, naming patterns, pruning strategies, and bi-directional logging to the experiment tracker chosen in Step 2.

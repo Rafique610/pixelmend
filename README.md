@@ -99,3 +99,21 @@ All hyperparameter search studies across Tasks 1–4 are persisted in a centrali
 - **Study factory**: `create_or_load_study(study_name, direction, pruner_name, seed)`
 - **Pruning**: `MedianPruner` (early termination of non-competitive trials)
 - **Reporting & Export**: Automatic export of trial history to CSV (`trials_history.csv`) and JSON summary statistics (`study_summary.json`) for report figures and tables.
+
+---
+
+## Datasets & Data Pipelines
+
+### Oxford-IIIT Pet (Tasks 1, 2, 3)
+The Oxford-IIIT Pet dataset comprises 7,349 images across 37 cat and dog breeds.
+- **Download**: Run `task download-pets` (downloads and unpacks into `data/oxford-iiit-pet/`).
+- **Deterministic Partitioning**:
+  - Official `trainval` (3,680 images) split into **80% Train** (2,944 images) and **20% Validation** (736 images), stratified across all 37 breeds with random seed 42.
+  - Official `test` (3,669 images) reserved strictly for final benchmark evaluation across Tasks 1, 2, and 3.
+  - Split manifest: `manifests/pets_split.json`.
+- **PyTorch Dataset (`PetDataset`)**:
+  - Location: `src/shared/datasets/pets.py`
+  - Normalization: $128 \times 128$ spatial resolution, 3-channel RGB float32 tensors scaled to $[0.0, 1.0]$.
+  - Fast DataLoader: `get_pet_dataloader(split, batch_size, shuffle, num_workers)`.
+- **Verification**: Run `task verify-pets` to validate split counts, tensor ranges, and export sample inspection grid to `results/oxford_pets_sample_grid.png`.
+

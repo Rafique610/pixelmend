@@ -40,6 +40,11 @@ tasks:
     cmds:
       - "{{.PYTHON}} scripts/download_fs2k.py"
 
+  verify-pets:
+    desc: "Verify Oxford-IIIT Pet dataset splits and generate sample grid"
+    cmds:
+      - "{{.PYTHON}} scripts/verify_pets.py"
+
   generate-manifests:
     desc: "Generate deterministic validation and test corruption manifests"
     cmds:
