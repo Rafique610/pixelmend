@@ -141,4 +141,24 @@ Tasks 1, 2, and 3 restore four distinct corruption states:
   - DataLoader: `get_corrupted_pet_dataloader(split, batch_size, ...)`.
 - **Verification**: Run `task verify-corruptions` to validate noise statistics, blur frequency attenuation, and export the $4 \times 4$ panel to `results/corruption_verification_grid.png`.
 
+### FS2K Paired Face-to-Sketch Dataset (Task 4)
+The FS2K dataset contains 2,104 paired high-resolution facial photographs and corresponding artist sketches across 3 distinct sketch styles:
+- **Download & Ingestion**: Run `task download-fs2k` (downloads the 104.6 MB Google Drive archive and unpacks into `data/fs2k/`).
+- **Verified 1:1 Image Pairing**:
+  - Style 0 (Style 1): 976 paired instances
+  - Style 1 (Style 2): 731 paired instances
+  - Style 2 (Style 3): 397 paired instances
+  - Total verified pairs: 2,104 pairs (0 missing pairs).
+- **Stratified Partitioning (`manifests/fs2k_split.json`)**:
+  - Official `test` set: 1,046 pairs strictly reserved for final cGAN benchmark evaluation.
+  - Official `train` set: 1,058 pairs partitioned into **85% Train** (899 pairs) and **15% Validation** (159 pairs), stratified across all 3 sketch styles (seed 42).
+- **PyTorch Paired Dataset (`FS2KDataset`)**:
+  - Location: `src/shared/datasets/fs2k.py`
+  - Yields: `(photo_tensor, sketch_tensor, style_id)` with shapes `(3, 128, 128)`, `(3, 128, 128)`, and `int` style label $\in \{0, 1, 2\}$.
+  - Supports dual normalization: $[0.0, 1.0]$ and $[-1.0, 1.0]$ (for tanh generator outputs).
+  - Synchronized paired data augmentation: simultaneous random horizontal flipping preserving facial geometric correspondence.
+  - Fast DataLoader: `get_fs2k_dataloader(split, batch_size, shuffle, num_workers)`.
+- **Verification**: Run `task verify-fs2k` to validate split counts, dual normalization ranges, and export a 3-style comparative inspection panel to `results/fs2k_sample_grid.png`.
+
+
 

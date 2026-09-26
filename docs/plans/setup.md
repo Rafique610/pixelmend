@@ -205,7 +205,7 @@ Download the official Oxford-IIIT Pet dataset, split the official `trainval` set
 
 ---
 
-## Step 5: Corruption Pipeline & Deterministic Manifests
+## ✅ Step 5: Corruption Pipeline & Deterministic Manifests
 
 ### Scope
 Implement the four image corruptions specified in the assignment (Clean/Identity, Salt-and-Pepper noise, Gaussian blur, Rectangular occlusion). Implement dynamic randomized sampling for training, and deterministic JSON manifest generation for reproducible validation and rigorous multi-severity test benchmarks.

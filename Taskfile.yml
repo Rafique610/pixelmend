@@ -40,6 +40,11 @@ tasks:
     cmds:
       - "{{.PYTHON}} scripts/download_fs2k.py"
 
+  verify-fs2k:
+    desc: "Verify FS2K paired dataset splits and generate sample grid"
+    cmds:
+      - "{{.PYTHON}} scripts/verify_fs2k.py"
+
   verify-pets:
     desc: "Verify Oxford-IIIT Pet dataset splits and generate sample grid"
     cmds:
