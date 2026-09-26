@@ -117,3 +117,28 @@ The Oxford-IIIT Pet dataset comprises 7,349 images across 37 cat and dog breeds.
   - Fast DataLoader: `get_pet_dataloader(split, batch_size, shuffle, num_workers)`.
 - **Verification**: Run `task verify-pets` to validate split counts, tensor ranges, and export sample inspection grid to `results/oxford_pets_sample_grid.png`.
 
+### Corruption Pipeline & Benchmark Manifests
+Tasks 1, 2, and 3 restore four distinct corruption states:
+1. **Clean / Identity** (Label `0`): Unmodified image tensor.
+2. **Salt-and-Pepper Noise** (Label `1`): Impulse noise where $p/2$ pixels are set to $0.0$ and $p/2$ to $1.0$.
+   - Training: $p \sim \mathcal{U}(0.02, 0.15)$.
+   - Test benchmark: Fixed severities $p \in \{0.03, 0.08, 0.15\}$.
+3. **Gaussian Blur** (Label `2`): 2D Gaussian kernel convolution attenuating high spatial frequencies.
+   - Training: $k \in \{3, 5, 7\}$, $\sigma \sim \mathcal{U}(0.5, 2.5)$.
+   - Test benchmark: Fixed pairs $(k, \sigma) \in \{(3, 0.7), (5, 1.5), (7, 2.5)\}$.
+4. **Rectangular Occlusion** (Label `3`): Non-overlapping/partially overlapping masked bounding boxes.
+   - Training: $1$–$3$ boxes covering $10\%$–$35\%$ image area.
+   - Test benchmark: Fixed severities ($1$ box $\approx 10\%$, $2$ boxes $\approx 20\%$, $3$ boxes $\approx 35\%$).
+
+- **Deterministic Manifests**:
+  - `manifests/val_manifest.json`: 736 validation images, strictly balanced ($25\%$ per class = 184 each), pre-seeded with fixed corruption parameters for reproducible validation across epochs.
+  - `manifests/test_manifest.json`: 3,669 test images $\times$ 10 variations (1 clean + 3 severities $\times$ 3 corruptions) = 36,690 standardized evaluation instances.
+  - Regenerate manifests anytime via `task generate-manifests`.
+- **PyTorch Corrupted Dataset (`CorruptedPetDataset`)**:
+  - Location: `src/shared/datasets/corrupted.py`
+  - In `train` mode: Dynamic, stochastic on-the-fly corruption sampling for endless augmentation.
+  - In `val` and `test` modes: Exact parameter lookups against deterministic manifests.
+  - DataLoader: `get_corrupted_pet_dataloader(split, batch_size, ...)`.
+- **Verification**: Run `task verify-corruptions` to validate noise statistics, blur frequency attenuation, and export the $4 \times 4$ panel to `results/corruption_verification_grid.png`.
+
+

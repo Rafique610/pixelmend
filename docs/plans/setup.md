@@ -162,7 +162,7 @@ Design and establish a unified Optuna hyperparameter optimization protocol backe
 
 ---
 
-## Step 4: Oxford-IIIT Pet Dataset Download & Split
+## ✅ Step 4: Oxford-IIIT Pet Dataset Download & Split
 
 ### Scope
 Download the official Oxford-IIIT Pet dataset, split the official `trainval` set into deterministic train and validation subsets (seed 42), preserve the official `test` set untouched for final evaluation, and construct a standardized PyTorch `Dataset` pipeline that guarantees 128×128 RGB normalization.

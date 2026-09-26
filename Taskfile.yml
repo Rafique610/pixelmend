@@ -50,6 +50,11 @@ tasks:
     cmds:
       - "{{.PYTHON}} scripts/generate_manifests.py"
 
+  verify-corruptions:
+    desc: "Verify corruption mathematics and export 4x4 visual verification panel"
+    cmds:
+      - "{{.PYTHON}} scripts/verify_corruptions.py"
+
   # ---------------------------------------------------------------------------
   # Task 1 — Universal Autoencoder
   # ---------------------------------------------------------------------------
