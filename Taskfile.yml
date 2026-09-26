@@ -1,0 +1,228 @@
+# GenAI Assignment — Taskfile
+# Run `task --list` to see all available tasks.
+# Install: https://taskfile.dev/#/installation
+version: "3"
+
+vars:
+  PYTHON: uv run python
+  UV: uv
+
+tasks:
+  # ---------------------------------------------------------------------------
+  # Environment
+  # ---------------------------------------------------------------------------
+  setup:
+    desc: "Install all Python dependencies (uv sync)"
+    cmds:
+      - "{{.UV}} sync"
+
+  setup-dev:
+    desc: "Install Python deps including dev extras"
+    cmds:
+      - "{{.UV}} sync --extra dev"
+
+  # ---------------------------------------------------------------------------
+  # Data
+  # ---------------------------------------------------------------------------
+  download-data:
+    desc: "Download Oxford-IIIT Pet (Tasks 1-3) and FS2K (Task 4) datasets"
+    cmds:
+      - "{{.PYTHON}} scripts/download_pets.py"
+      - "{{.PYTHON}} scripts/download_fs2k.py"
+
+  download-pets:
+    desc: "Download Oxford-IIIT Pet dataset only"
+    cmds:
+      - "{{.PYTHON}} scripts/download_pets.py"
+
+  download-fs2k:
+    desc: "Download FS2K dataset only"
+    cmds:
+      - "{{.PYTHON}} scripts/download_fs2k.py"
+
+  generate-manifests:
+    desc: "Generate deterministic validation and test corruption manifests"
+    cmds:
+      - "{{.PYTHON}} scripts/generate_manifests.py"
+
+  # ---------------------------------------------------------------------------
+  # Task 1 — Universal Autoencoder
+  # ---------------------------------------------------------------------------
+  train-task1:
+    desc: "Train Task 1 universal denoising autoencoder (baseline run)"
+    cmds:
+      - "{{.PYTHON}} src/task1/train.py"
+
+  optuna-task1:
+    desc: "Run Optuna hyperparameter search for Task 1"
+    cmds:
+      - "{{.PYTHON}} src/task1/optuna_search.py"
+
+  eval-task1:
+    desc: "Evaluate Task 1 model on test set"
+    cmds:
+      - "{{.PYTHON}} src/task1/evaluate.py"
+
+  export-onnx-task1:
+    desc: "Export Task 1 model to ONNX"
+    cmds:
+      - "{{.PYTHON}} src/task1/export_onnx.py"
+
+  # ---------------------------------------------------------------------------
+  # Task 2 — Hard-Routed Specialist Autoencoders
+  # ---------------------------------------------------------------------------
+  train-task2-classifier:
+    desc: "Train Task 2 corruption classifier"
+    cmds:
+      - "{{.PYTHON}} src/task2/train_classifier.py"
+
+  optuna-task2-classifier:
+    desc: "Optuna search for Task 2 classifier"
+    cmds:
+      - "{{.PYTHON}} src/task2/optuna_classifier.py"
+
+  train-task2-specialists:
+    desc: "Train Task 2 specialist autoencoders (all 3)"
+    cmds:
+      - "{{.PYTHON}} src/task2/train_specialists.py"
+
+  optuna-task2-specialists:
+    desc: "Optuna search for Task 2 specialist architecture"
+    cmds:
+      - "{{.PYTHON}} src/task2/optuna_specialists.py"
+
+  eval-task2:
+    desc: "Evaluate Task 2 system (oracle + predicted routing)"
+    cmds:
+      - "{{.PYTHON}} src/task2/evaluate.py"
+
+  export-onnx-task2:
+    desc: "Export Task 2 classifier + specialists to ONNX (4 files)"
+    cmds:
+      - "{{.PYTHON}} src/task2/export_onnx.py"
+
+  # ---------------------------------------------------------------------------
+  # Task 3 — Soft Mixture-of-Experts
+  # ---------------------------------------------------------------------------
+  train-task3:
+    desc: "Train Task 3 soft MoE (warm-up + joint fine-tune)"
+    cmds:
+      - "{{.PYTHON}} src/task3/train.py"
+
+  optuna-task3:
+    desc: "Optuna search for Task 3 joint fine-tuning"
+    cmds:
+      - "{{.PYTHON}} src/task3/optuna_search.py"
+
+  eval-task3:
+    desc: "Evaluate Task 3 and analyse routing weights"
+    cmds:
+      - "{{.PYTHON}} src/task3/evaluate.py"
+      - "{{.PYTHON}} src/task3/routing_analysis.py"
+
+  export-onnx-task3:
+    desc: "Export Task 3 soft MoE pipeline to ONNX"
+    cmds:
+      - "{{.PYTHON}} src/task3/export_onnx.py"
+
+  # ---------------------------------------------------------------------------
+  # Task 4 — Conditional GAN
+  # ---------------------------------------------------------------------------
+  train-task4:
+    desc: "Train Task 4 conditional GAN (face-to-sketch)"
+    cmds:
+      - "{{.PYTHON}} src/task4/train.py"
+
+  optuna-task4:
+    desc: "Optuna search for Task 4 GAN hyperparameters"
+    cmds:
+      - "{{.PYTHON}} src/task4/optuna_search.py"
+
+  eval-task4:
+    desc: "Evaluate Task 4 generator on test set"
+    cmds:
+      - "{{.PYTHON}} src/task4/evaluate.py"
+
+  export-onnx-task4:
+    desc: "Export Task 4 generator to ONNX"
+    cmds:
+      - "{{.PYTHON}} src/task4/export_onnx.py"
+
+  # ---------------------------------------------------------------------------
+  # ONNX — all tasks
+  # ---------------------------------------------------------------------------
+  export-onnx:
+    desc: "Export all task models to ONNX"
+    deps:
+      - export-onnx-task1
+      - export-onnx-task2
+      - export-onnx-task3
+      - export-onnx-task4
+
+  # ---------------------------------------------------------------------------
+  # Application — Backend
+  # ---------------------------------------------------------------------------
+  dev-backend:
+    desc: "Start FastAPI backend in development mode (hot-reload)"
+    cmds:
+      - "{{.PYTHON}} -m uvicorn src.app.backend.main:app --reload --host 0.0.0.0 --port 8000"
+
+  # ---------------------------------------------------------------------------
+  # Application — Frontend
+  # ---------------------------------------------------------------------------
+  dev-frontend:
+    desc: "Start React frontend in development mode"
+    dir: src/app/frontend
+    cmds:
+      - pnpm dev
+
+  install-frontend:
+    desc: "Install frontend Node dependencies"
+    dir: src/app/frontend
+    cmds:
+      - pnpm install
+
+  build-frontend:
+    desc: "Build frontend for production"
+    dir: src/app/frontend
+    cmds:
+      - pnpm build
+
+  # ---------------------------------------------------------------------------
+  # Docker
+  # ---------------------------------------------------------------------------
+  docker-up:
+    desc: "Start full application with Docker Compose (one command)"
+    cmds:
+      - docker compose up --build
+
+  docker-down:
+    desc: "Stop and remove Docker Compose containers"
+    cmds:
+      - docker compose down
+
+  # ---------------------------------------------------------------------------
+  # MLflow UI
+  # ---------------------------------------------------------------------------
+  mlflow-ui:
+    desc: "Open MLflow tracking UI at http://localhost:5000"
+    cmds:
+      - "{{.PYTHON}} -m mlflow ui --port 5000"
+
+  # ---------------------------------------------------------------------------
+  # Testing & Linting
+  # ---------------------------------------------------------------------------
+  test:
+    desc: "Run all tests with pytest"
+    cmds:
+      - "{{.UV}} run pytest tests/ -v"
+
+  lint:
+    desc: "Lint with ruff"
+    cmds:
+      - "{{.UV}} run ruff check src/ scripts/ tests/"
+
+  fmt:
+    desc: "Format with ruff"
+    cmds:
+      - "{{.UV}} run ruff format src/ scripts/ tests/"
