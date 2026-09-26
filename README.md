@@ -89,3 +89,13 @@ All training runs, Optuna trials, learning rate curves, loss metrics, and sample
 task mlflow-ui
 ```
 Navigate to [http://localhost:5000](http://localhost:5000) to inspect active experiments, hyperparameter comparisons, and image artifacts.
+
+---
+
+## Hyperparameter Optimization (Optuna)
+
+All hyperparameter search studies across Tasks 1–4 are persisted in a centralized SQLite database (`optuna/optuna_studies.db`). Studies survive process restarts and automatically synchronize trial metrics with MLflow.
+
+- **Study factory**: `create_or_load_study(study_name, direction, pruner_name, seed)`
+- **Pruning**: `MedianPruner` (early termination of non-competitive trials)
+- **Reporting & Export**: Automatic export of trial history to CSV (`trials_history.csv`) and JSON summary statistics (`study_summary.json`) for report figures and tables.
