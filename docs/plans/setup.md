@@ -66,7 +66,7 @@ Establish the Python workspace, package dependencies, environment variable templ
 
 ---
 
-## Step 2: Experiment Tracking — MLflow vs W&B
+## ✅ Step 2: Experiment Tracking — MLflow vs W&B
 
 ### Decision & Why It Matters
 All four tasks involve multiple hyperparameter optimization trials (Optuna), comparative baseline runs, ablation studies, and evaluation passes. We must select a single primary experiment tracker to log scalars (loss, PSNR, SSIM), hyperparameters, sample reconstruction grids, and training curves. The chosen tool directly impacts local developer workflow, offline reproducibility, Optuna integration simplicity, and the ability to export high-resolution vector plots and artifact grids for the final IEEE report.
