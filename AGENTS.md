@@ -107,6 +107,9 @@ to know it:
    as approved (`✅`) once confirmed.
 7. Log the step in that day's `.memory/tasks.md` (format in `processes.md`)
    so progress is visible without re-deriving it from chat history.
+8. Maintain `.gitignore` side-by-side on EVERY step: keep datasets, weights,
+   checkpoints, `.memory/`, MLflow runs, and temp artifacts cleanly excluded
+   so proposed git commits remain small and clean.
 
 This is what gives a visible timetable: the numbered plan docs under
 `docs/plans/` are the "what's next," and `.memory/tasks.md` is the running

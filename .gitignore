@@ -1,34 +1,39 @@
 # =============================================================================
-# Datasets (large binary files — download separately)
-# =============================================================================
-data/
-manifests/
-
-# =============================================================================
-# Model checkpoints (large — download separately or use Git LFS)
-# =============================================================================
-checkpoints/
-
-# =============================================================================
-# ONNX models (committed if small; otherwise Git LFS)
-# models/onnx/ is NOT ignored — small ONNX files go in repo
+# Gitignore — AI-4009 Generative AI Project
+# Maintained side-by-side on every step.
 # =============================================================================
 
-# =============================================================================
-# Optuna database
-# =============================================================================
+# --- Session Memory (Private / Local-only per INSTRUCTIONS.md) ---
+.memory/
+
+# --- Temporary Archives & PDFs ---
+*.zip
+*.tar.gz
+*.tgz
+
+# --- Datasets (Raw images — download via scripts) ---
+data/*
+!data/.gitkeep
+!data/README.md
+
+# --- Model Checkpoints (Heavy weights — download links provided in README) ---
+checkpoints/*
+!checkpoints/.gitkeep
+!checkpoints/**/README.md
+
+# --- Optuna Studies Database ---
 optuna/*.db
 optuna/*.db-shm
 optuna/*.db-wal
+!optuna/.gitkeep
+# Note: JSON export summaries are tracked for evaluation records:
+!optuna/*.json
 
-# =============================================================================
-# MLflow local tracking
-# =============================================================================
+# --- MLflow Local Tracking Directory ---
 mlruns/
+.mlflow/
 
-# =============================================================================
-# Python
-# =============================================================================
+# --- Python Build, Cache & Environments ---
 __pycache__/
 *.py[cod]
 *.pyo
@@ -42,47 +47,43 @@ build/
 .venv/
 .uv/
 
-# =============================================================================
-# Node / Frontend
-# =============================================================================
+# --- Node & Frontend Build Output ---
 node_modules/
 dist/
 .next/
 .nuxt/
 *.tsbuildinfo
+.eslintcache
 
-# =============================================================================
-# Environment / Secrets
-# =============================================================================
+# --- Secrets & Local Environment Config ---
 .env
 .env.local
 .env.*.local
+*.pem
+*.key
 
-# =============================================================================
-# Docker
-# =============================================================================
+# --- Docker ---
 .docker/
 
-# =============================================================================
-# Editors & OS
-# =============================================================================
+# --- IDEs & OS Metadata ---
 .vscode/
 .idea/
 *.swp
 *.swo
 .DS_Store
 Thumbs.db
+desktop.ini
 
-# =============================================================================
-# Test & coverage artefacts
-# =============================================================================
+# --- Test & Coverage Artifacts ---
 .pytest_cache/
 .coverage
 htmlcov/
 .ruff_cache/
 
-# =============================================================================
-# Results (large image grids) — keep summary JSON, ignore large dumps
-# =============================================================================
+# --- Evaluation Output & Large Visual Dumps ---
 results/**/*.png
 results/**/*.jpg
+results/**/*.jpeg
+!results/**/.gitkeep
+# Quantitative JSON metrics are preserved in Git:
+!results/**/*.json

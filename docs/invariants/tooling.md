@@ -38,3 +38,10 @@
 - Data directory: `data/` (gitignored).
 - Checkpoints: `checkpoints/` (gitignored, provide download link).
 - ONNX models: `models/onnx/`.
+
+## Gitignore Maintenance (Mandatory Side-by-Side)
+
+- Maintain `.gitignore` continuously alongside every step, feature, or new tool.
+- Never allow large dataset archives, binary weights, MLflow logs, or local `.env` files to be tracked.
+- Keep deterministic manifests (`manifests/*.json`) and JSON quantitative summaries tracked while ignoring large raw image outputs (`results/**/*.png`).
+- `.memory/` is private and strictly gitignored.
