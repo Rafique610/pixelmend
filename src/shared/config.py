@@ -106,8 +106,12 @@ class Settings(BaseSettings):
 
     @property
     def mlflow_uri(self) -> str:
-        """Resolved MLflow tracking URI (falls back to local mlruns/)."""
-        return self.mlflow_tracking_uri or ""
+        """Resolved MLflow tracking URI (defaults to SQLite database in mlruns/)."""
+        if self.mlflow_tracking_uri:
+            return self.mlflow_tracking_uri
+        db_path = Path("mlruns/mlflow.db").resolve()
+        db_path.parent.mkdir(parents=True, exist_ok=True)
+        return f"sqlite:///{db_path}"
 
 
 @lru_cache(maxsize=1)

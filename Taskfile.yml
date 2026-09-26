@@ -207,7 +207,7 @@ tasks:
   mlflow-ui:
     desc: "Open MLflow tracking UI at http://localhost:5000"
     cmds:
-      - "{{.PYTHON}} -m mlflow ui --port 5000"
+      - "{{.PYTHON}} -m mlflow ui --backend-store-uri sqlite:///mlruns/mlflow.db --port 5000"
 
   # ---------------------------------------------------------------------------
   # Testing & Linting

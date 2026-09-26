@@ -72,7 +72,20 @@ uv sync --extra dev
 cp .env.example .env
 ```
 
-### 4. Verify Setup
+### 4. Verify Setup & Tests
 ```bash
 task --list
+task test
 ```
+
+---
+
+## Experiment Tracking (MLflow)
+
+All training runs, Optuna trials, learning rate curves, loss metrics, and sample visual reconstruction grids are automatically tracked using a local SQLite-backed MLflow store (`mlruns/mlflow.db`).
+
+### Launch Tracking UI
+```bash
+task mlflow-ui
+```
+Navigate to [http://localhost:5000](http://localhost:5000) to inspect active experiments, hyperparameter comparisons, and image artifacts.
