@@ -311,7 +311,7 @@ Acquire and process the FS2K (Facial Sketch Synthesis 2K) paired dataset require
 
 ---
 
-## Step 7: Shared Losses, Metrics & Logging Helpers
+## ✅ Step 7: Shared Losses, Metrics & Logging Helpers
 
 ### Scope
 Implement reusable, numerically stable PyTorch loss functions (L1, SSIM loss, combined reconstruction loss), standardized evaluation metrics (PSNR, SSIM, L1 error), and visual logging helpers for qualitative reconstruction grids and training curves. Wire all metrics and artifacts directly to the experiment tracker established in Step 2.

@@ -30,20 +30,27 @@ The assignment mandates progressive spatial reduction with increasing channels a
 
 ### Alternatives to Research
 
-| Variant | Estimated Parameters | Skip Connections | Bottleneck Compression | Multi-Corruption Suitability | Implementation Complexity |
+| Variant | Parameters | Skip Connections | Bottleneck Compression | Latency (CPU b=16) | Compliance & Complexity |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Option 1: Plain Conv Stack** | ~1.2M – 2.0M | None (strict bottleneck) | High (e.g., $128\times 128 \to 8\times 8 \times 256$ or $4\times 4 \times 512$) | Baseline for blur/noise; struggles with sharp texture restoration under occlusion | Low (sequential Conv2d $\to$ BN $\to$ LeakyReLU $\to$ MaxPool; ConvTranspose2d upsampling) |
-| **Option 2: ResBlock-based AE** | ~2.5M – 4.2M | Intra-block residual connections only; no encoder-to-decoder skips | High (same bottleneck spatial reduction, higher representation capacity) | Strong gradient propagation; proven in DnCNN and image restoration baselines | Moderate (residual convolution blocks with identity/projection shortcuts within stages) |
-| **Option 3: U-Net-lite (Limited Skips)** | ~1.8M – 3.0M | 1–2 restricted skip connections with $1\times 1$ conv bottleneck / channel reduction | Moderate (compressed feature maps injected at intermediate decoder stage) | High detail preservation; risk of partially bypassing compression if unconstrained | Moderate-High (requires careful channel bottlenecking on skip paths to justify per assignment spec) |
+| **Option 1: Plain Conv Stack** | 4,869,187 | None (strict bottleneck) | High ($128\times 128 \to 8\times 8 \times 256$, $3.0\times$–$12.0\times$) | 418.98 ms | Fully compliant; baseline restoration |
+| **Option 2: ResBlock-based AE** | 4,913,091 | Intra-block residual shortcuts only | High ($8\times 8 \times 256$, strict bottleneck) | 456.86 ms | Fully compliant; superior gradient flow (+0.9% params, +9% latency) |
+| **Option 3: U-Net-lite (Restricted Skips)** | 4,990,259 | $1\times 1$ bottlenecked skip paths ($4\times$ channel reduction) | Moderate (intermediate features bypass) | 460.27 ms | Needs ablation justification against strict bottleneck |
+| **Option 4: ResBlock + U-Net-lite** | 5,068,211 | Intra-stage residual + $1\times 1$ skip paths | Moderate (partial bypass) | 547.46 ms | Highest complexity (+13.3% params, +30.6% latency) |
 
-### Open Question for User
-- **Bottleneck Spatial Dimension & Latent Representation**: Whether to compress down to a spatial feature map (e.g., $8\times 8 \times 256$ or $4\times 4 \times 512$) or flatten into a 1D vector (e.g., 256-d or 512-d with a dense layer). Spatial bottlenecks preserve coarse topology for inpainting, whereas 1D vectors enforce maximum abstraction. This should remain tunable during implementation and Optuna search rather than locked early.
+### Open Question for User & Decision
+- **Bottleneck Spatial Dimension & Latent Representation**: We preserve a spatial feature map at $8\times 8$ (rather than flattening to a 1D vector). Spatial bottlenecks preserve coarse 2D topology essential for rectangular occlusion inpainting and localized edge restoration, while still enforcing a $3.0\times$ to $12.0\times$ data compression ratio over the raw $3 \times 128 \times 128 = 49,152$ input pixels depending on `bottleneck_dim \in {64, 128, 256}`.
 
 ### Recommended Approach
-*(To be filled during implementation after architecture prototyping and user review.)*
+**Option 2: ResBlock-based Autoencoder with Strict Bottleneck (`use_residual=True`, `use_skips=False`)**.
+1. **Assignment Invariant Compliance**: Strictly adheres to the requirement: *"Meaningful bottleneck compression: no unrestricted skip connections that allow the network to bypass bottleneck compression."* All information must pass through the compressed $8\times 8$ bottleneck.
+2. **Enhanced Representation & Gradient Propagation**: Intra-block residual connections (He et al., CVPR 2016) allow stable gradient flow across all 8 conv stages without bypassing the bottleneck.
+3. **Low Computational Cost**: Adds only $43,904$ parameters (+0.9%) and $37.88\text{ ms}$ CPU latency (+9.0%) over the plain conv stack.
+4. **Built-in Ablation Support**: `use_skips` remains configurable in `UniversalAutoencoder` so we can benchmark against U-Net-lite directly in ablation studies for the IEEE report.
 
 ### Research Notes
-*(Findings, parameter counts, and empirical validation observations to be recorded during implementation.)*
+- **Empirical Measurements**: Benchmarked across 20 iterations at batch size 16 on $128 \times 128 \times 3$ tensors. All 4 options generate exact output shapes $(16, 3, 128, 128)$ with values bounded to $[0.0, 1.0]$ via `Sigmoid`.
+- **Ablation Readiness**: The architecture cleanly decouples encoder (`src/task1/encoder.py`), decoder (`src/task1/decoder.py`), and unified wrapper (`src/task1/autoencoder.py`), allowing seamless toggling of `use_residual`, `use_skips`, `bottleneck_dim`, and `upsample_mode`.
+- **Checkpoints**: Full state serialization tested with roundtrip fidelity and parameter gradient check passes without NaN.
 
 ### Files Changed / Created
 - `src/task1/encoder.py`

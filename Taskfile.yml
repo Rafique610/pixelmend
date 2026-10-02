@@ -69,6 +69,11 @@ tasks:
   # ---------------------------------------------------------------------------
   # Task 1 — Universal Autoencoder
   # ---------------------------------------------------------------------------
+  verify-task1-arch:
+    desc: "Benchmark Task 1 autoencoder architecture variants (parameters, latency, compression)"
+    cmds:
+      - "{{.PYTHON}} scripts/verify_task1_architectures.py"
+
   train-task1:
     desc: "Train Task 1 universal denoising autoencoder (baseline run)"
     cmds:

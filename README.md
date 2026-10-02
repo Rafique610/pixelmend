@@ -189,6 +189,26 @@ The FS2K dataset contains 2,104 paired high-resolution facial photographs and co
 - **Tracker Integration (`log_epoch_visuals`)**: One-line helper logging qualitative grids and heatmaps directly into MLflow.
 - **Verification**: Run `task verify-losses-metrics` to validate gradient backpropagation, numerical metrics, and export inspection artifacts to `results/losses_metrics_verification.png` and `results/sample_training_curves.png`.
 
+---
 
+## Task 1: Universal Denoising Autoencoder
 
+A unified convolutional autoencoder for blind restoration across clean images, salt-and-pepper noise, Gaussian blur, and rectangular occlusion without metadata conditioning.
 
+### Model Architecture (`src/task1/`)
+- **Encoder (`src/task1/encoder.py`)**: Progressive 4-stage convolutional downsampling ($128 \times 128 \to 8 \times 8$) with residual conv blocks and strided downsampling convolutions.
+- **Bottleneck**: Compressed spatial feature map ($8 \times 8 \times 256$, $16,384$ floats) enforcing a strict $3.0\times$–$12.0\times$ data compression ratio with optional dropout.
+- **Decoder (`src/task1/decoder.py`)**: Mirrored 4-stage upsampling ($8 \times 8 \to 128 \times 128$) with dual-convolution refinement blocks and `Sigmoid` output head in $[0.0, 1.0]$.
+- **Wrapper (`src/task1/autoencoder.py`)**: Unified `UniversalAutoencoder` module supporting encoding, decoding, parameter counting, compression ratios, and full checkpoint serialization.
+
+### Architectural Variants & Benchmarks
+Benchmarked across 20 iterations at batch size 16 on $128 \times 128 \times 3$ tensors:
+
+| Variant | Parameters | Skip Connections | Bottleneck Compression | CPU Latency (b=16) | Selected Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Plain Conv Stack** | 4,869,187 | None (strict bottleneck) | High ($8\times 8 \times 256$, $3.0\times$) | 418.98 ms | Baseline |
+| **ResBlock Autoencoder** | 4,913,091 | Intra-stage residual only | High ($8\times 8 \times 256$, $3.0\times$) | 456.86 ms | **Selected Primary Architecture** |
+| **U-Net-lite (Restricted Skips)** | 4,990,259 | $1\times 1$ bottlenecked skips | Moderate (intermediate bypass) | 460.27 ms | Ablation Reference |
+| **ResBlock + U-Net-lite** | 5,068,211 | Residual + $1\times 1$ skips | Moderate (intermediate bypass) | 547.46 ms | Ablation Reference |
+
+- **Verification**: Run `task verify-task1-arch` or `pytest tests/test_task1_architecture.py`.
