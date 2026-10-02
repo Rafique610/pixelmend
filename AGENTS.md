@@ -110,6 +110,12 @@ to know it:
 8. Maintain `.gitignore` side-by-side on EVERY step: keep datasets, weights,
    checkpoints, `.memory/`, MLflow runs, and temp artifacts cleanly excluded
    so proposed git commits remain small and clean.
+9. Empirical integrity & explicit experiment storage: Whenever running
+   benchmarks, sweeps, or training experiments, execute the exact number
+   of epochs, samples, and trials claimed. Never assume, approximate, or
+   misreport execution depth. Persist raw run metrics and artifacts
+   explicitly to disk (e.g. JSON/figures) and MLflow so all results are
+   tangible, verifiable, and auditable.
 
 This is what gives a visible timetable: the numbered plan docs under
 `docs/plans/` are the "what's next," and `.memory/tasks.md` is the running

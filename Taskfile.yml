@@ -74,6 +74,11 @@ tasks:
     cmds:
       - "{{.PYTHON}} scripts/verify_task1_architectures.py"
 
+  research-task1-loss:
+    desc: "Empirical comparison of L1 vs SSIM loss weight alpha for Task 1"
+    cmds:
+      - "{{.PYTHON}} scripts/research_task1_loss.py"
+
   train-task1:
     desc: "Train Task 1 universal denoising autoencoder (baseline run)"
     cmds:

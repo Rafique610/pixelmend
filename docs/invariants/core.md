@@ -28,11 +28,19 @@ src/
 - No model definition over ~200 lines. Split encoder/decoder/gate into
   separate files within the task folder.
 
-## Real Data Only
+## Real Data Only & Empirical Integrity
 
 Never show fabricated metrics, mock losses, invented accuracy numbers, or
 placeholder images. Every number shown to the user must come from a real
 computation — a real training run, a real evaluation, a real Optuna trial.
+
+- **Explicit execution**: Whenever executing benchmarks, parameter sweeps,
+  or training runs, execute the exact number of epochs and iterations claimed.
+  Never assume, extrapolate, or misreport run depth.
+- **Explicit storage**: Explicitly persist all experiment results, loss logs,
+  and comparative visualizations to disk (JSON/figures) and tracking stores
+  (MLflow) during or immediately following the run so all data is tangible and
+  reproducible.
 
 ## Ponytail Ladder (Active for All Code)
 

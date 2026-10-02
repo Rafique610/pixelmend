@@ -39,9 +39,13 @@ class ExperimentTracker:
         return mlflow.tracking.MlflowClient(tracking_uri=self.settings.mlflow_uri)
 
     def set_experiment(self, experiment_name: str) -> str:
-        """Ensure experiment exists and set it as active. Return experiment ID."""
-        exp = mlflow.set_experiment(experiment_name)
-        return exp.experiment_id
+        """Ensure experiment exists and set it as active, restoring if deleted. Return experiment ID."""
+        client = self.client
+        exp = client.get_experiment_by_name(experiment_name)
+        if exp is not None and exp.lifecycle_stage == "deleted":
+            client.restore_experiment(exp.experiment_id)
+        active_exp = mlflow.set_experiment(experiment_name)
+        return active_exp.experiment_id
 
     def start_run(
         self,
@@ -107,12 +111,34 @@ class ExperimentTracker:
 
     def log_image(
         self,
-        image: Union[torch.Tensor, np.ndarray, Image.Image],
-        artifact_file: str,
+        image_or_tag: Union[torch.Tensor, np.ndarray, Image.Image, str],
+        artifact_or_image: Optional[Union[torch.Tensor, np.ndarray, Image.Image, str]] = None,
+        artifact_file: Optional[str] = None,
+        step: Optional[int] = None,
     ) -> None:
-        """Log an image artifact (supports Tensor [C,H,W] or [H,W,C], ndarray, or PIL)."""
-        pil_img = self._to_pil(image)
-        mlflow.log_image(pil_img, artifact_file=artifact_file)
+        """Log an image artifact (supports Tensor [C,H,W] or [H,W,C], ndarray, or PIL).
+
+        Supports both calling conventions:
+        - log_image(image, artifact_file="name.png", step=1)
+        - log_image("tag_name", image, step=1)
+        """
+        if isinstance(image_or_tag, str):
+            tag = image_or_tag
+            img = artifact_or_image
+            suffix = f"_step_{step}.png" if step is not None else ".png"
+            filename = tag if tag.endswith(".png") else f"{tag}{suffix}"
+        else:
+            img = image_or_tag
+            filename = str(artifact_or_image or artifact_file or "image.png")
+            if step is not None and not filename.endswith(f"_{step}.png"):
+                stem = Path(filename).stem
+                filename = f"{stem}_step_{step}.png"
+            elif not filename.endswith(".png"):
+                filename = f"{filename}.png"
+
+        assert img is not None, "Image must not be None"
+        pil_img = self._to_pil(img)
+        mlflow.log_image(pil_img, artifact_file=filename)
 
     def log_figure(
         self,
