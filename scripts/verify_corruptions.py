@@ -126,7 +126,7 @@ def main():
             "Identity",
             f"Sev {sev} (p={sp_spec['p']})",
             f"Sev {sev} (k={blur_spec['kernel_size']}, \u03c3={blur_spec['sigma']})",
-            f"Sev {sev} ({occl_spec['num_boxes']} boxes, {int(occl_spec['target_ratio']*100)}%)",
+            f"Sev {sev} ({occl_spec['num_boxes']} boxes, {int(occl_spec['target_ratio'] * 100)}%)",
         ]
 
         for col_idx, (img, sub) in enumerate(zip(images, subtitles)):

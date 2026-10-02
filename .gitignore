@@ -81,9 +81,13 @@ htmlcov/
 .ruff_cache/
 
 # --- Evaluation Output & Large Visual Dumps ---
+results/*.png
+results/*.jpg
+results/*.jpeg
 results/**/*.png
 results/**/*.jpg
 results/**/*.jpeg
 !results/**/.gitkeep
+!results/.gitkeep
 # Quantitative JSON metrics are preserved in Git:
 !results/**/*.json

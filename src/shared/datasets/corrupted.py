@@ -126,16 +126,12 @@ class CorruptedPetDataset(Dataset):
                     e for e in raw_entries if e["corruption_type"] == self.corruption_filter
                 ]
             if self.severity_filter is not None:
-                raw_entries = [
-                    e for e in raw_entries if e.get("severity") == self.severity_filter
-                ]
+                raw_entries = [e for e in raw_entries if e.get("severity") == self.severity_filter]
 
             self.manifest_entries = raw_entries
 
             # Build image filename to base_dataset index mapping for fast O(1) lookups
-            self._img_to_idx = {
-                item["image"]: i for i, item in enumerate(self.base_dataset.items)
-            }
+            self._img_to_idx = {item["image"]: i for i, item in enumerate(self.base_dataset.items)}
 
     def __len__(self) -> int:
         if self.mode == "dynamic":

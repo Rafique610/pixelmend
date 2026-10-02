@@ -60,6 +60,12 @@ tasks:
     cmds:
       - "{{.PYTHON}} scripts/verify_corruptions.py"
 
+  verify-losses-metrics:
+    desc: "Verify shared losses, evaluation metrics, and visualization helpers"
+    cmds:
+      - "{{.PYTHON}} scripts/verify_losses_and_metrics.py"
+
+
   # ---------------------------------------------------------------------------
   # Task 1 — Universal Autoencoder
   # ---------------------------------------------------------------------------

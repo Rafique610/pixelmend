@@ -177,7 +177,7 @@ def build_fs2k_splits(fs2k_dir: Path, val_ratio: float = 0.15, seed: int = 42) -
         final_train.extend(train_sub)
         pct = len(val_sub) / len(items) * 100
         print(
-            f"  Style {s_id} (Style {s_id+1}): "
+            f"  Style {s_id} (Style {s_id + 1}): "
             f"{len(train_sub)} train, {len(val_sub)} val ({pct:.1f}%)"
         )
 

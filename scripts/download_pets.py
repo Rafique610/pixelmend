@@ -102,12 +102,14 @@ def generate_deterministic_split(
             if len(parts) >= 4:
                 img_name = parts[0]
                 class_id, species, breed_id = int(parts[1]), int(parts[2]), int(parts[3])
-                trainval_items.append({
-                    "image": f"{img_name}.jpg",
-                    "class_id": class_id - 1,  # 0-indexed class (0..36)
-                    "species": species,
-                    "breed_id": breed_id,
-                })
+                trainval_items.append(
+                    {
+                        "image": f"{img_name}.jpg",
+                        "class_id": class_id - 1,  # 0-indexed class (0..36)
+                        "species": species,
+                        "breed_id": breed_id,
+                    }
+                )
 
     test_items = []
     with open(test_txt, "r", encoding="utf-8") as f:
@@ -116,12 +118,14 @@ def generate_deterministic_split(
             if len(parts) >= 4:
                 img_name = parts[0]
                 class_id, species, breed_id = int(parts[1]), int(parts[2]), int(parts[3])
-                test_items.append({
-                    "image": f"{img_name}.jpg",
-                    "class_id": class_id - 1,
-                    "species": species,
-                    "breed_id": breed_id,
-                })
+                test_items.append(
+                    {
+                        "image": f"{img_name}.jpg",
+                        "class_id": class_id - 1,
+                        "species": species,
+                        "breed_id": breed_id,
+                    }
+                )
 
     print(f"Loaded {len(trainval_items)} trainval items and {len(test_items)} test items.")
 

@@ -98,16 +98,18 @@ def build_val_manifest(
             )
             params = {"boxes": boxes, "fill_value": 0.0, "target_ratio": target_ratio}
 
-        entries.append({
-            "val_id": idx,
-            "image": img_file,
-            "class_id": item.get("class_id", 0),
-            "species": item.get("species", 0),
-            "breed_id": item.get("breed_id", 0),
-            "corruption_type": c_type.value,
-            "corruption_label": label,
-            "params": params,
-        })
+        entries.append(
+            {
+                "val_id": idx,
+                "image": img_file,
+                "class_id": item.get("class_id", 0),
+                "species": item.get("species", 0),
+                "breed_id": item.get("breed_id", 0),
+                "corruption_type": c_type.value,
+                "corruption_label": label,
+                "params": params,
+            }
+        )
 
     return {
         "metadata": {
@@ -149,56 +151,62 @@ def build_test_manifest(
         breed_id = item.get("breed_id", 0)
 
         # 1. Clean (variation 0)
-        entries.append({
-            "eval_id": eval_id,
-            "image_id": img_idx,
-            "image": img_file,
-            "class_id": class_id,
-            "species": species,
-            "breed_id": breed_id,
-            "corruption_type": CorruptionType.CLEAN.value,
-            "corruption_label": CorruptionLabel.CLEAN.value,
-            "severity": 0,
-            "variant_name": "clean",
-            "params": {},
-        })
+        entries.append(
+            {
+                "eval_id": eval_id,
+                "image_id": img_idx,
+                "image": img_file,
+                "class_id": class_id,
+                "species": species,
+                "breed_id": breed_id,
+                "corruption_type": CorruptionType.CLEAN.value,
+                "corruption_label": CorruptionLabel.CLEAN.value,
+                "severity": 0,
+                "variant_name": "clean",
+                "params": {},
+            }
+        )
         eval_id += 1
 
         # 2. Salt-and-Pepper (variations 1, 2, 3)
         for sp_spec in TEST_SEVERITIES[CorruptionType.SALT_AND_PEPPER.value]:
-            entries.append({
-                "eval_id": eval_id,
-                "image_id": img_idx,
-                "image": img_file,
-                "class_id": class_id,
-                "species": species,
-                "breed_id": breed_id,
-                "corruption_type": CorruptionType.SALT_AND_PEPPER.value,
-                "corruption_label": CorruptionLabel.SALT_AND_PEPPER.value,
-                "severity": sp_spec["severity"],
-                "variant_name": sp_spec["name"],
-                "params": {"p": sp_spec["p"], "channel_independent": False},
-            })
+            entries.append(
+                {
+                    "eval_id": eval_id,
+                    "image_id": img_idx,
+                    "image": img_file,
+                    "class_id": class_id,
+                    "species": species,
+                    "breed_id": breed_id,
+                    "corruption_type": CorruptionType.SALT_AND_PEPPER.value,
+                    "corruption_label": CorruptionLabel.SALT_AND_PEPPER.value,
+                    "severity": sp_spec["severity"],
+                    "variant_name": sp_spec["name"],
+                    "params": {"p": sp_spec["p"], "channel_independent": False},
+                }
+            )
             eval_id += 1
 
         # 3. Gaussian Blur (variations 4, 5, 6)
         for blur_spec in TEST_SEVERITIES[CorruptionType.GAUSSIAN_BLUR.value]:
-            entries.append({
-                "eval_id": eval_id,
-                "image_id": img_idx,
-                "image": img_file,
-                "class_id": class_id,
-                "species": species,
-                "breed_id": breed_id,
-                "corruption_type": CorruptionType.GAUSSIAN_BLUR.value,
-                "corruption_label": CorruptionLabel.GAUSSIAN_BLUR.value,
-                "severity": blur_spec["severity"],
-                "variant_name": blur_spec["name"],
-                "params": {
-                    "kernel_size": blur_spec["kernel_size"],
-                    "sigma": blur_spec["sigma"],
-                },
-            })
+            entries.append(
+                {
+                    "eval_id": eval_id,
+                    "image_id": img_idx,
+                    "image": img_file,
+                    "class_id": class_id,
+                    "species": species,
+                    "breed_id": breed_id,
+                    "corruption_type": CorruptionType.GAUSSIAN_BLUR.value,
+                    "corruption_label": CorruptionLabel.GAUSSIAN_BLUR.value,
+                    "severity": blur_spec["severity"],
+                    "variant_name": blur_spec["name"],
+                    "params": {
+                        "kernel_size": blur_spec["kernel_size"],
+                        "sigma": blur_spec["sigma"],
+                    },
+                }
+            )
             eval_id += 1
 
         # 4. Rectangular Occlusion (variations 7, 8, 9)
@@ -210,23 +218,25 @@ def build_test_manifest(
                 target_ratio=occl_spec["target_ratio"],
                 rng=rng,
             )
-            entries.append({
-                "eval_id": eval_id,
-                "image_id": img_idx,
-                "image": img_file,
-                "class_id": class_id,
-                "species": species,
-                "breed_id": breed_id,
-                "corruption_type": CorruptionType.OCCLUSION.value,
-                "corruption_label": CorruptionLabel.OCCLUSION.value,
-                "severity": occl_spec["severity"],
-                "variant_name": occl_spec["name"],
-                "params": {
-                    "boxes": boxes,
-                    "fill_value": 0.0,
-                    "target_ratio": occl_spec["target_ratio"],
-                },
-            })
+            entries.append(
+                {
+                    "eval_id": eval_id,
+                    "image_id": img_idx,
+                    "image": img_file,
+                    "class_id": class_id,
+                    "species": species,
+                    "breed_id": breed_id,
+                    "corruption_type": CorruptionType.OCCLUSION.value,
+                    "corruption_label": CorruptionLabel.OCCLUSION.value,
+                    "severity": occl_spec["severity"],
+                    "variant_name": occl_spec["name"],
+                    "params": {
+                        "boxes": boxes,
+                        "fill_value": 0.0,
+                        "target_ratio": occl_spec["target_ratio"],
+                    },
+                }
+            )
             eval_id += 1
 
     return {

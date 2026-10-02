@@ -160,5 +160,35 @@ The FS2K dataset contains 2,104 paired high-resolution facial photographs and co
   - Fast DataLoader: `get_fs2k_dataloader(split, batch_size, shuffle, num_workers)`.
 - **Verification**: Run `task verify-fs2k` to validate split counts, dual normalization ranges, and export a 3-style comparative inspection panel to `results/fs2k_sample_grid.png`.
 
+---
+
+## Shared Losses, Metrics & Visualization Helpers
+
+### Reversible & Numerically Stable Losses (`src/shared/losses.py`)
+- **$L_1$ Reconstruction Loss**:
+  $$\mathcal{L}_{L1}(y, \hat{y}) = \frac{1}{CHW}\sum |y - \hat{y}|$$
+- **Structural Similarity Loss (SSIM Loss)**:
+  $$\mathcal{L}_{\text{SSIM}}(y, \hat{y}) = 1 - \text{SSIM}(y, \hat{y})$$
+  Powered by `pytorch_msssim` with 11×11 Gaussian window ($\sigma = 1.5$) and dynamic range $1.0$.
+- **Combined Reconstruction Loss**:
+  $$\mathcal{L}_{\text{rec}}(y, \hat{y}) = \alpha \cdot \mathcal{L}_{L1}(y, \hat{y}) + (1 - \alpha) \cdot \mathcal{L}_{\text{SSIM}}(y, \hat{y})$$
+  Configurable loss weighting ($\alpha=0.84$ default, based on Zhao et al., IEEE TCI 2017).
+- **GAN Losses (`GANLoss`)**: Vanilla BCE with logits or LSGAN MSE loss for conditional GAN training.
+
+### Standardized Evaluation Metrics (`src/shared/metrics.py`)
+- **PSNR**: Peak Signal-to-Noise Ratio with dynamic range $1.0$ and zero-MSE guard ($100.0\text{ dB}$ ceiling).
+- **SSIM**: Mean structural similarity index calculated on $[0.0, 1.0]$ float tensors.
+- **MAE / L1 Error**: Mean pixel-level absolute difference.
+- **MSE**: Mean squared error.
+- **Batch Evaluation (`evaluate_metrics`)**: Evaluates all four scalar metrics on GPU/CPU batches and returns dictionary of Python floats for tracking and reporting.
+
+### Visualization & Logging Helpers (`src/shared/visualization.py`)
+- **Reconstruction Grid (`make_reconstruction_grid`)**: Generates 3-row grid showing Corrupted Input, Restored Output, and Ground Truth Target.
+- **Error Heatmap (`make_error_heatmap`)**: Computes pixel-wise residual magnitude $|y - \hat{y}|$ mapped to colormaps (`inferno`, `jet`, `plasma`) to pinpoint high-error regions.
+- **Training Curves (`plot_training_curves`)**: Generates publication-ready 3-panel Matplotlib figures (Loss, PSNR, SSIM) for training and validation runs.
+- **Tracker Integration (`log_epoch_visuals`)**: One-line helper logging qualitative grids and heatmaps directly into MLflow.
+- **Verification**: Run `task verify-losses-metrics` to validate gradient backpropagation, numerical metrics, and export inspection artifacts to `results/losses_metrics_verification.png` and `results/sample_training_curves.png`.
+
+
 
 

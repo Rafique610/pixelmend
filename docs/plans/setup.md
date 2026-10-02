@@ -272,7 +272,7 @@ Implement the four image corruptions specified in the assignment (Clean/Identity
 
 ---
 
-## Step 6: FS2K Dataset Download & Split
+## ✅ Step 6: FS2K Dataset Download & Split
 
 ### Scope
 Acquire and process the FS2K (Facial Sketch Synthesis 2K) paired dataset required for Task 4 (Conditional GAN). Enforce paired alignment between facial photographs and sketch portraits across 3 artistic sketch styles, construct a stratified 15% validation split, and implement a paired PyTorch dataset loader.

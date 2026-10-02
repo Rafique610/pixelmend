@@ -49,13 +49,15 @@ class PetDataset(Dataset):
         self.items = self._load_manifest(m_path)
 
         # Standard transformation pipeline: PIL RGB -> Resize 128x128 -> Tensor [0.0, 1.0]
-        self.base_transform = T.Compose([
-            T.Resize(
-                (self.image_size, self.image_size),
-                interpolation=T.InterpolationMode.BILINEAR,
-            ),
-            T.ToTensor(),
-        ])
+        self.base_transform = T.Compose(
+            [
+                T.Resize(
+                    (self.image_size, self.image_size),
+                    interpolation=T.InterpolationMode.BILINEAR,
+                ),
+                T.ToTensor(),
+            ]
+        )
 
     def _load_manifest(self, manifest_path: Path) -> list[dict[str, Any]]:
         """Load split items from JSON manifest, or scan directory if manifest absent."""
