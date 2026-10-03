@@ -44,7 +44,7 @@ flowchart TD
 
 ---
 
-## Step 1: Classifier Architecture Research
+## ✅ Step 1: Classifier Architecture Research
 
 ### Scope
 Research and evaluate candidate neural network backbones for the 4-class corruption classifier $C: \mathbb{R}^{3 \times 128 \times 128} \to \mathbb{R}^4$.
@@ -57,31 +57,54 @@ The classifier's accuracy establishes the theoretical performance ceiling of the
 
 The design must balance classification accuracy, inference speed, model parameter footprint, and training stability on $128 \times 128$ RGB inputs.
 
-### Alternatives to Research
+### Candidate Architectures Evaluated
 
-| Metric / Dimension | Alternative 1: Custom Conv Stack | Alternative 2: MobileNet-style Backbone | Alternative 3: ResNet-18 Head (Pretrained) |
-| :--- | :--- | :--- | :--- |
-| **Description** | 4 conv blocks (Conv-BN-ReLU-MaxPool) $\to$ Global Average Pooling (GAP) $\to$ FC(4) | Depthwise separable conv blocks with inverted residuals $\to$ GAP $\to$ FC(4) | Torchvision ResNet-18 backbone pretrained on ImageNet, replacing `fc` layer with Linear(512, 4) |
-| **Estimated Parameters** | ~0.2M – 0.5M | ~1.5M – 2.5M | ~11.2M |
-| **Inference Latency (est.)** | < 2 ms (CPU/GPU) | ~3–5 ms | ~8–12 ms |
-| **Accuracy Potential** | Moderate (85–92%) | High (92–96%) | Very High (> 96%) |
-| **Pretrained Available** | No (trained from scratch) | Yes (ImageNet weights optional) | Yes (ImageNet-1k weights) |
-| **Implementation Effort** | Low (minimal custom PyTorch code) | Medium (depthwise blocks) | Low (transfer learning wrapper) |
-| **Overfitting Risk** | Low (few parameters) | Low (strong regularizer via depthwise) | Medium (large capacity for 4 synthetic classes) |
+1. **Custom Convolutional Stack (`CustomConvClassifier`)**:
+   4-stage convolutional neural network (Conv3x3-BN-LeakyReLU-MaxPool2d) followed by Global Average Pooling (GAP), Dropout ($p=0.2$), and Linear classification head ($C \to 4$).
+   Progression: $(32, 64, 128, 256)$ downsampling $128\times 128 \to 64\times 64 \to 32\times 32 \to 16\times 16 \to 8\times 8 \to 1\times 1$.
+2. **MobileNet-style Inverted Residual Backbone (`MobileNetClassifier`)**:
+   Depthwise separable convolutions with inverted residuals and linear bottlenecks (Howard et al., 2017; Sandler et al., CVPR 2018).
+   Initial stem conv followed by depthwise separable expansion blocks, GAP, Dropout, and Linear head.
+3. **Adapted ResNet-18 Backbone (`ResNet18Classifier`)**:
+   Torchvision ResNet-18 (He et al., CVPR 2016) with residual skip connections across 4 stages, replacing the final 1000-class classification head with `Linear(512, 4)`.
 
-### Open Question
+### Empirical Architecture Benchmark Protocol
+Executed empirical profiling on PyTorch 2.14 (CPU) measuring parameters, model size, inference latency across batch sizes 1 (interactive edge latency) and 16 (batched throughput) over 50 iterations with 10 warmup iterations.
+Evaluated empirical convergence across 5 full epochs on a balanced Oxford-IIIT Pet subset (256 training pairs, 64 per corruption class; 128 validation pairs, 32 per corruption class from `manifests/val_manifest.json`) trained with AdamW ($lr=1\times 10^{-3}$, weight decay $1\times 10^{-4}$) and CrossEntropyLoss.
+
+| Candidate Architecture | Trainable Params | Model Size (MB) | CPU Latency ($B=1$) | CPU Latency ($B=16$) | Throughput (FPS) | 5-Ep Val Acc (%) | Val Macro-F1 | Mean Epoch Time (s) |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **CustomConvClassifier** | **389,924** | **1.49 MB** | **4.81 ms** | **68.92 ms** | **232.2** | **76.56%** | **0.7635** | **2.84s** |
+| **MobileNetClassifier** | 247,588 | 0.94 MB | 3.88 ms | 45.96 ms | 348.2 | 63.28% | 0.5782 | 2.44s |
+| **ResNet18Classifier** | 11,178,564 | 42.64 MB | 11.12 ms | 108.52 ms | 147.4 | 55.47% | 0.4983 | 5.45s |
+
+*Data persisted to: `results/task2/classifier_architecture_benchmark.json`.*
+
+### Open Question Resolution: Independent Classifier vs Shared Encoder
 *Should the classifier share early convolutional layers with Task 1's universal autoencoder encoder or remain completely independent?*
-- **Shared Encoder Layers**: Reduces total parameter count and allows joint feature reuse, but introduces strict training coupling and potential negative gradient interference between cross-entropy classification and reconstruction objectives.
-- **Independent Classifier**: Completely decoupled lifecycle, simplifies Optuna tuning and independent ONNX export, prevents regression in either task, and adheres to modular feature isolation.
+- **Decision: Completely Independent Classifier (`CustomConvClassifier`)**.
+- **Evidence & Rationale**:
+  1. **Objective Gradient Conflict**: Autoencoder encoders must preserve fine spatial topologies and localized pixel frequencies ($8\times 8 \times 256$) to enable high-fidelity image reconstruction ($L_1 + \text{SSIM}$). In contrast, corruption classification requires invariant spatial pooling (GAP) to identify global noise signatures regardless of pet breed or location. Multi-task gradient sharing without complex gradient balancing (Sener & Koltun, NeurIPS 2018) induces destructive interference.
+  2. **Operational Decoupling & Identity Bypass**: In the hard-routing pipeline, clean images bypass specialist autoencoders entirely ($\hat{x} = \tilde{x}$). Sharing an encoder would force clean images to compute redundant autoencoder representations.
+  3. **Modular Deployment & ONNX Export**: An independent classifier exports cleanly to a lightweight 1.5 MB standalone ONNX graph (`models/onnx/task2_classifier.onnx`), decoupled from autoencoder weights and independently tunable via Optuna.
 
 ### Recommended Approach
-*(To be filled during implementation based on experimental evidence)*
+**Adopt `CustomConvClassifier` with 4 conv stages as the canonical backbone for Step 2 and Step 3 (Optuna)**:
+1. **Convergence Speed & Discrimination**: Under identical training conditions, `CustomConvClassifier` attained **76.56% validation accuracy and 0.7635 Macro-F1** in only 5 epochs on a 256-sample subset (peaking at 79.7%), significantly outperforming MobileNet (63.28%) and ResNet-18 (55.47%).
+2. **Optimal Capacity**: With 389,924 parameters (1.49 MB), it avoids the overparameterization of ResNet-18 (11.18M parameters, 42.64 MB, 2.3x slower) while providing sufficient expressive capacity compared to depthwise separable convolutions.
+3. **Ultra-Fast Inference**: Achieves 4.81 ms single-image CPU latency and 232 FPS throughput, ensuring near-instantaneous routing decisions in the FastAPI service.
+4. **Unified API**: All 3 architectures are implemented and accessible via `CorruptionClassifier(backbone=...)` and `build_classifier()` in `src/task2/classifier.py` for comparative study and ablation reporting.
 
-### Research Notes
-*(Empty section for findings during implementation)*
+### Research Notes (for IEEE Report)
+- **Empirical Dynamics**: Early epochs (1-2) require warm-up as the final linear projection aligns with pooled convolutional feature maps. By epoch 4-5, `CustomConvClassifier` establishes clear separation of high-frequency impulses (salt-and-pepper) and low-pass blur.
+- **Backbone Extensibility**: The `CorruptionClassifier` abstraction cleanly exposes `.extract_features(x)`, `.predict_proba(x)`, and `.predict(x)` methods, facilitating both hard routing (Task 2) and soft gating analysis (Task 3).
+- **Benchmark Code**: Implemented in `scripts/verify_task2_classifier_architectures.py` and unit tested across all 3 variants in `tests/test_task2_classifier.py` (16 tests passed).
 
-### Files Changed
+### Files Changed / Created
 - `src/task2/classifier.py`
+- `scripts/verify_task2_classifier_architectures.py`
+- `tests/test_task2_classifier.py`
+- `results/task2/classifier_architecture_benchmark.json`
 
 ---
 

@@ -237,4 +237,27 @@ Empirical sensitivity evaluation across 5 full epochs on a 15% training subset (
 - **Training Pipeline (`src/task1/train.py`)**: End-to-end training over dynamic corruptions with deterministic validation across `manifests/val_manifest.json`, early stopping, model checkpointing (`checkpoints/task1/baseline_best.pth`), and MLflow experiment logging.
 - **Verification**: Run `task research-task1-loss` or `pytest tests/test_task1_train.py`.
 
+---
+
+## Task 2: Hard-Routing Restoration System
+
+A decoupled restoration system combining a 4-class corruption classifier with an identity bypass (clean) and 3 specialist autoencoders (salt-and-pepper, Gaussian blur, rectangular occlusion).
+
+### Classifier Architecture Research (`src/task2/classifier.py`)
+- **Backbones Evaluated**:
+  1. `CustomConvClassifier`: 4-stage Conv-BN-LeakyReLU-MaxPool2d + GAP + Dropout + Linear head.
+  2. `MobileNetClassifier`: Inverted residual blocks with depthwise separable convolutions (Sandler et al., 2018).
+  3. `ResNet18Classifier`: Adapted torchvision ResNet-18 (He et al., 2016).
+- **Empirical Architecture Benchmark**: Benchmarked CPU latency ($B=1, 16$), parameter counts, model memory footprint, and 5-epoch empirical convergence on balanced Oxford-IIIT Pet data (256 train, 128 val):
+
+| Candidate Architecture | Trainable Params | Model Size (MB) | CPU Latency ($B=1$) | CPU Latency ($B=16$) | Throughput (FPS) | 5-Ep Val Acc (%) | Val Macro-F1 | Mean Epoch Time (s) |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **CustomConvClassifier** | **389,924** | **1.49 MB** | **4.81 ms** | **68.92 ms** | **232.2** | **76.56%** | **0.7635** | **2.84s** |
+| **MobileNetClassifier** | 247,588 | 0.94 MB | 3.88 ms | 45.96 ms | 348.2 | 63.28% | 0.5782 | 2.44s |
+| **ResNet18Classifier** | 11,178,564 | 42.64 MB | 11.12 ms | 108.52 ms | 147.4 | 55.47% | 0.4983 | 5.45s |
+
+- **Design Decision**: Adopted `CustomConvClassifier` as the primary backbone. It converged rapidly to 76.56% accuracy / 0.7635 Macro-F1 in 5 epochs, operates at 4.81 ms CPU latency, and stays under 1.5 MB in size, avoiding ResNet-18's parameter bloat (11.18M params) and MobileNet's slower early convergence.
+- **Architectural Decoupling**: Classifier operates completely independently from autoencoders to eliminate gradient interference between reconstruction and classification objectives, support zero-cost identity bypass for clean inputs, and allow independent ONNX export.
+- **Verification**: Run `uv run python scripts/verify_task2_classifier_architectures.py` or `uv run pytest tests/test_task2_classifier.py`.
+
 

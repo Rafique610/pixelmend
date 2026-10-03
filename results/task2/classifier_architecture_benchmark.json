@@ -1,0 +1,47 @@
+{
+  "CustomConvClassifier": {
+    "name": "CustomConvClassifier",
+    "total_params": 389924,
+    "trainable_params": 389924,
+    "model_size_mb": 1.49,
+    "latency_b1_ms": 4.81,
+    "latency_b16_ms": 68.92,
+    "throughput_fps": 232.2,
+    "initial_val_loss": 1.3869,
+    "initial_val_acc": 25.0,
+    "final_val_loss": 0.5319,
+    "final_val_acc": 76.56,
+    "final_val_f1": 0.7635,
+    "mean_epoch_time_s": 2.84
+  },
+  "MobileNetClassifier": {
+    "name": "MobileNetClassifier",
+    "total_params": 247588,
+    "trainable_params": 247588,
+    "model_size_mb": 0.94,
+    "latency_b1_ms": 3.88,
+    "latency_b16_ms": 45.96,
+    "throughput_fps": 348.2,
+    "initial_val_loss": 1.3873,
+    "initial_val_acc": 25.0,
+    "final_val_loss": 1.8211,
+    "final_val_acc": 63.28,
+    "final_val_f1": 0.5782,
+    "mean_epoch_time_s": 2.44
+  },
+  "ResNet18Classifier": {
+    "name": "ResNet18Classifier",
+    "total_params": 11178564,
+    "trainable_params": 11178564,
+    "model_size_mb": 42.64,
+    "latency_b1_ms": 11.12,
+    "latency_b16_ms": 108.52,
+    "throughput_fps": 147.4,
+    "initial_val_loss": 1.4247,
+    "initial_val_acc": 25.0,
+    "final_val_loss": 1.4973,
+    "final_val_acc": 55.47,
+    "final_val_f1": 0.4983,
+    "mean_epoch_time_s": 5.45
+  }
+}
