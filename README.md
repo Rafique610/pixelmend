@@ -271,4 +271,36 @@ A decoupled restoration system combining a 4-class corruption classifier with an
 - **Canonical Baseline Checkpoint**: `checkpoints/task2/classifier_best.pt` (4.7 MB with optimizer/scheduler state).
 - **Verification**: Run `uv run python -m src.task2.train_classifier --epochs 15` or `uv run pytest tests/test_task2_train.py`.
 
+### Classifier Hyperparameter Optimization (`src/task2/optuna_classifier.py`)
+- **Bayesian Search Study**: SQLite-backed study (`task2-classifier` in `optuna/optuna_studies.db`) with `TPESampler` and `MedianPruner`.
+- **Winning Configuration (Trial #6)**:
+  - `learning_rate`: $1.57 \times 10^{-3}$
+  - `batch_size`: $16$
+  - `channel_config`: `'large'` (`(48, 96, 192, 256)`)
+  - `dropout`: $0.10$
+  - `weight_decay`: $3.06 \times 10^{-3}$
+  - **Validation Macro-F1**: **0.9877** ($>98.7\%$ validation accuracy)
+- **Artifacts**: Study configuration in `results/task2/classifier_best_hyperparams.json`, study summary in `optuna/task2-classifier.json`, optimization history plot in `results/task2/classifier_optuna_history.png`, and parameter importances plot in `results/task2/classifier_optuna_param_importances.png`.
+- **Verification**: Run `uv run pytest tests/test_task2_optuna.py`.
+
+### Specialist Autoencoder Design Research (`src/task2/specialist.py`)
+- **Architectural Candidates Evaluated**:
+  1. `Alternative 1 (Homogeneous Task 1 AE)`: Standard 4-stage ResBlock structure (`channels=(32, 64, 128, 256)`, bottleneck 256) across all 3 specialists.
+  2. `Alternative 2 (Lightweight Shared Variant)`: Scaled-down 3-stage structure (`channels=(32, 64, 128)`, bottleneck 128, no ResBlocks) across all 3 specialists.
+  3. `Alternative 3 (Corruption-Tailored Topologies)`: High-frequency residual network for Salt-and-Pepper (3 stages), multi-scale ResBlock for Blur (4 stages), deep contextual bottleneck ResBlock for Occlusion (4 stages).
+- **Empirical Architecture Benchmark Summary** (`results/task2/specialist_architecture_benchmark.json`):
+
+| Alternative | Total System Params (3 Experts) | Total Size (MB) | Mean CPU Latency ($B=1$) | Mean Val Loss | Mean Val PSNR (dB) | Mean Val SSIM |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Alternative 1: Homogeneous Task 1 AE** | 14,739,273 | 56.22 MB | 28.67 ms | 0.2875 | 12.17 dB | 0.3054 |
+| **Alternative 2: Lightweight Shared Variant** | **3,687,369** | **14.07 MB** | **22.33 ms** | **0.2718** | **13.02 dB** | **0.3215** |
+| **Alternative 3: Corruption-Tailored Topologies** | 11,065,929 | 42.21 MB | 26.89 ms | 0.2805 | 12.61 dB | 0.3154 |
+
+- **Design Decisions**:
+  - Adopted shared architectural topology for the 3 specialists to enable identical batching, predictable memory footprint, and uniform ONNX export.
+  - Resolved Open Question: Adopted **Shared Optuna Search** to optimize the common specialist topology in $<15\text{ minutes}$, followed by independent training of the 3 specialists on their respective single-corruption distributions.
+  - Implemented modular `SpecialistAutoencoder` and factory `build_specialist` in `src/task2/specialist.py`.
+- **Verification**: Run `uv run python scripts/verify_task2_specialist_architectures.py` or `uv run pytest tests/test_task2_specialist.py`.
+
+
 

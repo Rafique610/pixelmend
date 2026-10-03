@@ -1,0 +1,16 @@
+{
+  "study_name": "task2-classifier",
+  "direction": "MAXIMIZE",
+  "total_trials": 14,
+  "completed_trials": 8,
+  "pruned_trials": 5,
+  "best_trial_number": 6,
+  "best_value": 0.9877417176615305,
+  "best_params": {
+    "learning_rate": 0.0015696396388661157,
+    "batch_size": 16,
+    "channel_config": "large",
+    "dropout": 0.1,
+    "weight_decay": 0.003063462210622081
+  }
+}

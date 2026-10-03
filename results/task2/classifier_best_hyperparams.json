@@ -1,0 +1,15 @@
+{
+  "study_name": "task2-classifier",
+  "best_trial_number": 6,
+  "best_val_macro_f1": 0.9877,
+  "best_params": {
+    "learning_rate": 0.0015696396388661157,
+    "batch_size": 16,
+    "channel_config": "large",
+    "dropout": 0.1,
+    "weight_decay": 0.003063462210622081
+  },
+  "total_trials": 14,
+  "completed_trials": 8,
+  "pruned_trials": 5
+}

@@ -1,0 +1,200 @@
+{
+  "Alternative 1: Homogeneous Task 1 AE": {
+    "variant": "homogeneous",
+    "specialists": {
+      "salt_and_pepper": {
+        "efficiency": {
+          "params": 4913091,
+          "model_size_mb": 18.74,
+          "compression_ratio": 3.0,
+          "latency_b1_ms": 25.99,
+          "latency_b16_ms": 431.17,
+          "throughput_fps": 38.5
+        },
+        "convergence": {
+          "initial_loss": 0.2966,
+          "final_train_loss": 0.2633,
+          "val_loss": 0.2858,
+          "val_psnr": 12.01,
+          "val_ssim": 0.3124,
+          "mean_epoch_time_s": 5.922
+        }
+      },
+      "gaussian_blur": {
+        "efficiency": {
+          "params": 4913091,
+          "model_size_mb": 18.74,
+          "compression_ratio": 3.0,
+          "latency_b1_ms": 28.53,
+          "latency_b16_ms": 431.48,
+          "throughput_fps": 35.0
+        },
+        "convergence": {
+          "initial_loss": 0.2893,
+          "final_train_loss": 0.2771,
+          "val_loss": 0.2852,
+          "val_psnr": 12.45,
+          "val_ssim": 0.2963,
+          "mean_epoch_time_s": 5.898
+        }
+      },
+      "occlusion": {
+        "efficiency": {
+          "params": 4913091,
+          "model_size_mb": 18.74,
+          "compression_ratio": 3.0,
+          "latency_b1_ms": 31.48,
+          "latency_b16_ms": 434.71,
+          "throughput_fps": 31.8
+        },
+        "convergence": {
+          "initial_loss": 0.2889,
+          "final_train_loss": 0.2754,
+          "val_loss": 0.2916,
+          "val_psnr": 12.04,
+          "val_ssim": 0.3075,
+          "mean_epoch_time_s": 6.349
+        }
+      }
+    },
+    "system_total": {
+      "total_params": 14739273,
+      "total_size_mb": 56.22,
+      "mean_val_loss": 0.2875,
+      "mean_val_psnr": 12.17,
+      "mean_val_ssim": 0.3054
+    }
+  },
+  "Alternative 2: Lightweight Shared Variant": {
+    "variant": "lightweight",
+    "specialists": {
+      "salt_and_pepper": {
+        "efficiency": {
+          "params": 1229123,
+          "model_size_mb": 4.69,
+          "compression_ratio": 1.5,
+          "latency_b1_ms": 20.41,
+          "latency_b16_ms": 346.31,
+          "throughput_fps": 49.0
+        },
+        "convergence": {
+          "initial_loss": 0.2951,
+          "final_train_loss": 0.2437,
+          "val_loss": 0.2481,
+          "val_psnr": 14.15,
+          "val_ssim": 0.3362,
+          "mean_epoch_time_s": 4.647
+        }
+      },
+      "gaussian_blur": {
+        "efficiency": {
+          "params": 1229123,
+          "model_size_mb": 4.69,
+          "compression_ratio": 1.5,
+          "latency_b1_ms": 22.95,
+          "latency_b16_ms": 344.47,
+          "throughput_fps": 43.6
+        },
+        "convergence": {
+          "initial_loss": 0.291,
+          "final_train_loss": 0.2756,
+          "val_loss": 0.2898,
+          "val_psnr": 12.28,
+          "val_ssim": 0.2946,
+          "mean_epoch_time_s": 4.536
+        }
+      },
+      "occlusion": {
+        "efficiency": {
+          "params": 1229123,
+          "model_size_mb": 4.69,
+          "compression_ratio": 1.5,
+          "latency_b1_ms": 23.64,
+          "latency_b16_ms": 342.35,
+          "throughput_fps": 42.3
+        },
+        "convergence": {
+          "initial_loss": 0.2919,
+          "final_train_loss": 0.2368,
+          "val_loss": 0.2774,
+          "val_psnr": 12.64,
+          "val_ssim": 0.3336,
+          "mean_epoch_time_s": 4.509
+        }
+      }
+    },
+    "system_total": {
+      "total_params": 3687369,
+      "total_size_mb": 14.07,
+      "mean_val_loss": 0.2718,
+      "mean_val_psnr": 13.02,
+      "mean_val_ssim": 0.3215
+    }
+  },
+  "Alternative 3: Corruption-Tailored Topologies": {
+    "variant": "tailored",
+    "specialists": {
+      "salt_and_pepper": {
+        "efficiency": {
+          "params": 1239747,
+          "model_size_mb": 4.73,
+          "compression_ratio": 1.5,
+          "latency_b1_ms": 23.6,
+          "latency_b16_ms": 363.14,
+          "throughput_fps": 42.4
+        },
+        "convergence": {
+          "initial_loss": 0.2937,
+          "final_train_loss": 0.2015,
+          "val_loss": 0.2832,
+          "val_psnr": 12.5,
+          "val_ssim": 0.3199,
+          "mean_epoch_time_s": 4.803
+        }
+      },
+      "gaussian_blur": {
+        "efficiency": {
+          "params": 4913091,
+          "model_size_mb": 18.74,
+          "compression_ratio": 3.0,
+          "latency_b1_ms": 28.05,
+          "latency_b16_ms": 443.38,
+          "throughput_fps": 35.7
+        },
+        "convergence": {
+          "initial_loss": 0.2899,
+          "final_train_loss": 0.2656,
+          "val_loss": 0.2731,
+          "val_psnr": 12.85,
+          "val_ssim": 0.2967,
+          "mean_epoch_time_s": 5.692
+        }
+      },
+      "occlusion": {
+        "efficiency": {
+          "params": 4913091,
+          "model_size_mb": 18.74,
+          "compression_ratio": 3.0,
+          "latency_b1_ms": 29.01,
+          "latency_b16_ms": 423.31,
+          "throughput_fps": 34.5
+        },
+        "convergence": {
+          "initial_loss": 0.292,
+          "final_train_loss": 0.2782,
+          "val_loss": 0.2852,
+          "val_psnr": 12.49,
+          "val_ssim": 0.3297,
+          "mean_epoch_time_s": 5.707
+        }
+      }
+    },
+    "system_total": {
+      "total_params": 11065929,
+      "total_size_mb": 42.21,
+      "mean_val_loss": 0.2805,
+      "mean_val_psnr": 12.61,
+      "mean_val_ssim": 0.3154
+    }
+  }
+}
