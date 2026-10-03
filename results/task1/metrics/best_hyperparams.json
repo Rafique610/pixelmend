@@ -1,0 +1,15 @@
+{
+  "study_name": "task1-universal-ae",
+  "best_trial_number": 6,
+  "best_val_loss": 0.16533826745074728,
+  "best_params": {
+    "learning_rate": 0.0005443788406047074,
+    "batch_size": 16,
+    "bottleneck_dim": 256,
+    "channel_depth": "standard",
+    "dropout": 0.25,
+    "alpha": 0.9,
+    "weight_decay": 0.0001569639638866114
+  },
+  "n_trials": 14
+}

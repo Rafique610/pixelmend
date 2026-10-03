@@ -56,9 +56,18 @@ def test_run_training_quick_execution():
             bottleneck_dim=32,
             channels=(16, 32),
             checkpoint_path=ckpt_path,
+            run_name="pytest_smoke",
             quick=True,
         )
 
         assert ckpt_path.exists()
         assert "best_val_loss" in result
         assert result["best_val_loss"] > 0.0
+
+    # Clean up test artifacts from results directory
+    test_json = Path("results/task1/metrics/pytest_smoke_history.json")
+    test_fig = Path("results/task1/visualizations/pytest_smoke_training_curves.png")
+    if test_json.exists():
+        test_json.unlink()
+    if test_fig.exists():
+        test_fig.unlink()

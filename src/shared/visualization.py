@@ -115,48 +115,45 @@ def plot_training_curves(
     fig, axes = plt.subplots(1, 3, figsize=(16, 4.5))
     fig.suptitle(title, fontsize=14, fontweight="bold", y=1.02)
 
-    epochs = range(1, len(history.get("train_loss", [])) + 1)
+    epochs = list(range(1, len(history.get("train_loss", [])) + 1))
+    val_epochs = list(range(1, len(history.get("val_loss", [])) + 1))
 
     # 1. Loss Panel
     ax0 = axes[0]
     if "train_loss" in history and history["train_loss"]:
-        ax0.plot(epochs, history["train_loss"], label="Train Loss", color="#1f77b4", lw=2)
+        ax0.plot(epochs, history["train_loss"], label="Train Loss", color="#1f77b4", lw=2, marker="o", markersize=4)
     if "val_loss" in history and history["val_loss"]:
-        val_epochs = range(1, len(history["val_loss"]) + 1)
-        ax0.plot(
-            val_epochs,
-            history["val_loss"],
-            label="Val Loss",
-            color="#d62728",
-            lw=2,
-            linestyle="--",
-        )
+        ax0.plot(val_epochs, history["val_loss"], label="Val Loss", color="#d62728", lw=2, linestyle="--", marker="s", markersize=4)
     ax0.set_title("Loss", fontsize=12, fontweight="bold")
     ax0.set_xlabel("Epoch")
     ax0.set_ylabel("Loss")
+    if epochs:
+        ax0.set_xticks(epochs)
     ax0.grid(True, linestyle=":", alpha=0.6)
     ax0.legend(frameon=True)
 
     # 2. PSNR Panel
     ax1 = axes[1]
     if "val_psnr" in history and history["val_psnr"]:
-        val_epochs = range(1, len(history["val_psnr"]) + 1)
-        ax1.plot(val_epochs, history["val_psnr"], label="Val PSNR", color="#2ca02c", lw=2)
+        ax1.plot(val_epochs, history["val_psnr"], label="Val PSNR", color="#2ca02c", lw=2, marker="o", markersize=4)
         ax1.set_title("Peak Signal-to-Noise Ratio", fontsize=12, fontweight="bold")
         ax1.set_xlabel("Epoch")
         ax1.set_ylabel("PSNR (dB)")
+        if val_epochs:
+            ax1.set_xticks(val_epochs)
         ax1.grid(True, linestyle=":", alpha=0.6)
         ax1.legend(frameon=True)
 
     # 3. SSIM Panel
     ax2 = axes[2]
     if "val_ssim" in history and history["val_ssim"]:
-        val_epochs = range(1, len(history["val_ssim"]) + 1)
-        ax2.plot(val_epochs, history["val_ssim"], label="Val SSIM", color="#9467bd", lw=2)
+        ax2.plot(val_epochs, history["val_ssim"], label="Val SSIM", color="#9467bd", lw=2, marker="o", markersize=4)
         ax2.set_title("Structural Similarity Index", fontsize=12, fontweight="bold")
         ax2.set_xlabel("Epoch")
         ax2.set_ylabel("SSIM")
         ax2.set_ylim([0.0, 1.05])
+        if val_epochs:
+            ax2.set_xticks(val_epochs)
         ax2.grid(True, linestyle=":", alpha=0.6)
         ax2.legend(frameon=True)
 

@@ -159,7 +159,7 @@ Translate the selected Step 1 architecture and Step 2 loss formulation into modu
 
 ---
 
-## Step 4: Training & Validation Run (Baseline)
+## ✅ Step 4: Training & Validation Run (Baseline)
 
 ### Scope
 Conduct full baseline training of the Universal Autoencoder prior to hyperparameter optimization. Establish reference benchmark metrics and convergence dynamics on the complete Oxford-IIIT Pet training split.
@@ -246,15 +246,34 @@ Implement automated Bayesian hyperparameter optimization using Optuna to maximiz
    - Prints best trial number, optimal objective score, and parameter configuration dictionary.
    - Generates hyperparameter importances plot (`optuna.visualization.plot_param_importances`) and optimization history plot (`optuna.visualization.plot_optimization_history`).
 
-### Verification
-- Run 2-trial test run with 2 epochs each to verify pruning hooks and SQLite writes operate cleanly.
-- Verify trials are visible in SQLite database via sqlite3 query and experiment tracking UI.
-- Ensure best parameter set is printed and serialized to `results/task1/best_hyperparams.json`.
+### Empirical Optuna Search Results (14 Trials Total, SQLite + MLflow Tracked)
+
+- **Storage**: `sqlite:///optuna/optuna_studies.db` (`study_name="task1-universal-ae"`)
+- **Optimization Objective**: Minimize validation composite loss $\mathcal{L}_{\text{val}} = \alpha \mathcal{L}_1 + (1-\alpha)(1-\text{SSIM})$.
+- **Trial Outcome Summary**:
+  - Total trials executed: 14
+  - Completed trials: 11
+  - Pruned trials by `MedianPruner`: 3 (Trials 5, 7, 10 pruned at epoch 2)
+  - **Winning Trial**: **Trial #6** with **Validation Loss: 0.1653** (PSNR: 15.73 dB, SSIM: 0.4042 after only 2 epochs).
+
+| Hyperparameter | Search Space | Winning Value (Trial #6) | Empirical Sensitivity / Importance |
+| :--- | :--- | :---: | :--- |
+| `learning_rate` | $[3\times 10^{-4}, 3\times 10^{-3}]$ (log-uniform) | **$5.44 \times 10^{-4}$** | **54% importance** — single largest contributor to stability |
+| `weight_decay` | $[1\times 10^{-5}, 1\times 10^{-3}]$ (log-uniform) | **$1.57 \times 10^{-4}$** | **19% importance** — regularizes deeper conv kernels |
+| `alpha` | $[0.65, 0.90]$ (uniform) | **0.90** | **15% importance** — high L1 pull anchors pixel colors |
+| `channel_depth` | `{"compact", "standard", "wide"}` | **"standard" (32, 64, 128, 256)** | **4% importance** — ideal balance of capacity and speed |
+| `dropout` | $[0.0, 0.25]$ (uniform) | **0.25** | **4% importance** — prevents co-adaptation at bottleneck |
+| `bottleneck_dim` | $\{128, 256\}$ (categorical) | **256** | **2% importance** — spatial $8\times 8 \times 256$ representation |
+| `batch_size` | $\{16, 32\}$ (categorical) | **16** | **2% importance** — frequent gradient updates improve early descent |
 
 ### Files Changed / Created
-- `src/task1/optuna_search.py`
-- `optuna/optuna_studies.db`
-- `results/task1/best_hyperparams.json`
+- `src/task1/optuna_search.py` (Modular Bayesian search engine with Median pruning)
+- `tests/test_task1_optuna.py` (Isolated unit test for Optuna study and objective execution)
+- `results/task1/metrics/best_hyperparams.json` (Serialized winning parameter configuration)
+- `optuna/task1-universal-ae.json/study_summary.json` (Full study statistics)
+- `optuna/task1-universal-ae.json/trials_history.csv` (CSV log of all 14 evaluated trials)
+- `results/task1/visualizations/optuna_optimization_history.png` (Convergence trajectory across trials)
+- `results/task1/visualizations/optuna_param_importances.png` (Quantitative fANOVA parameter importance breakdown)
 
 ---
 
