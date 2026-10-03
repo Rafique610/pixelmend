@@ -260,4 +260,15 @@ A decoupled restoration system combining a 4-class corruption classifier with an
 - **Architectural Decoupling**: Classifier operates completely independently from autoencoders to eliminate gradient interference between reconstruction and classification objectives, support zero-cost identity bypass for clean inputs, and allow independent ONNX export.
 - **Verification**: Run `uv run python scripts/verify_task2_classifier_architectures.py` or `uv run pytest tests/test_task2_classifier.py`.
 
+### Corruption Classifier Training (`src/task2/train_classifier.py`)
+- **Balanced Multi-Class Sampling (`src/task2/dataset.py`)**: `BalancedBatchSampler` guarantees exactly $B/4$ samples per class in every batch ($25\%$ Clean, $25\%$ S&P, $25\%$ Blur, $25\%$ Occlusion) with dynamic training augmentations.
+- **Baseline Training Results (15 Epochs on Oxford Pets)**:
+  - **Validation Accuracy**: **98.78%** (baseline spec threshold was $>85.0\%$)
+  - **Macro-Averaged F1**: **0.9878** (Precision: 0.9878, Recall: 0.9878)
+  - **Best Validation Loss**: **0.0434** (Cross-Entropy)
+  - **Per-Class F1-Scores**: Clean: 0.9755, Salt & Pepper: 0.9973, Blur: 0.9864, Occlusion: 0.9919
+  - **Confusion Matrix**: Clear diagonal dominance ($>97.2\%$ diagonal accuracy across all classes, $100\%$ on occlusion).
+- **Canonical Baseline Checkpoint**: `checkpoints/task2/classifier_best.pt` (4.7 MB with optimizer/scheduler state).
+- **Verification**: Run `uv run python -m src.task2.train_classifier --epochs 15` or `uv run pytest tests/test_task2_train.py`.
+
 

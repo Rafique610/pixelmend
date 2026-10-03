@@ -108,35 +108,76 @@ Evaluated empirical convergence across 5 full epochs on a balanced Oxford-IIIT P
 
 ---
 
-## Step 2: Implement & Train Corruption Classifier
+## ✅ Step 2: Implement & Train Corruption Classifier
 
 ### Scope
 Implement the selected 4-class classifier architecture and training pipeline with balanced multi-class batching, cross-entropy loss, comprehensive classification metrics, and tracker integration.
 
-### What to Build
-- Model architecture definition in `src/task2/classifier.py` outputting unnormalized logits for the 4 classes: Clean ($0$), Salt-and-Pepper ($1$), Gaussian Blur ($2$), Rectangular Occlusion ($3$).
-- Classifier training script `src/task2/train_classifier.py` implementing balanced batch generation, validation loops, metric calculations, and checkpoint management.
+### What Was Built
+- **Classifier Architecture (`src/task2/classifier.py`)**: Outputting unnormalized logits for the 4 classes: Clean ($0$), Salt-and-Pepper ($1$), Gaussian Blur ($2$), Rectangular Occlusion ($3$).
+- **Dataset & Balanced Sampler (`src/task2/dataset.py`)**: `BalancedBatchSampler` enforcing exactly $B/4$ samples per class in every mini-batch ($25\%$ Clean, $25\%$ S&P, $25\%$ Blur, $25\%$ Occlusion) with dynamic training corruption and pre-cached validation data.
+- **Training Pipeline (`src/task2/train_classifier.py`)**: AdamW optimizer ($lr=1\times 10^{-3}, \text{weight\_decay}=1\times 10^{-4}$), CosineAnnealingLR scheduler ($1\times 10^{-3} \to 1\times 10^{-5}$), deterministic validation across all 736 images in `manifests/val_manifest.json`, metric logging, and checkpointing.
+- **Visualization Suite (`src/task2/visualization.py`)**: Generating loss/accuracy/F1 progression curves and normalized confusion matrix heatmaps.
 
-### Key Details
-- **Balanced Batching**: To prevent class imbalance from biasing classifier predictions, the training data loader or custom batch sampler must guarantee equal class representation ($25\%$ clean, $25\%$ salt-and-pepper, $25\%$ blur, $25\%$ occlusion) in every mini-batch ($B/4$ per class).
-- **Loss Function**: Multi-class Cross-Entropy loss over softmax probabilities:
-  $$\mathcal{L}_{CE} = -\sum_{k=0}^{3} y_k \log p_k, \quad p = \text{Softmax}(\text{logits})$$
-- **Optimization**: AdamW optimizer with initial learning rate $1 \times 10^{-3}$, cosine annealing learning rate scheduler, and weight decay $1 \times 10^{-4}$.
-- **Evaluation Metrics**: Computed on the validation set after every epoch:
-  - Overall classification accuracy.
-  - Macro-averaged Precision, Recall, and F1-score.
-  - Per-class Precision, Recall, and F1-score.
-  - Normalized $4 \times 4$ confusion matrix ($C_{i,j} = \frac{\text{count}(y=i, \hat{y}=j)}{\sum_k \text{count}(y=i, \hat{y}=k)}$).
-- **Tracker & Checkpoints**: Log epoch training/validation loss, accuracy, and macro-F1 to MLflow/W&B. Save the best model checkpoint to `checkpoints/task2/classifier_best.pt` based on validation macro-F1.
+### Empirical Training Results (15 Full Epochs)
+Trained across 15 full epochs (92 batches of size 32 per epoch, 2,944 samples/epoch) and validated on 736 images from `manifests/val_manifest.json`:
+
+| Epoch | Train Loss | Val Loss | Val Acc (%) | Val Macro-F1 | Learning Rate | Checkpoint Event |
+| :---: | :---: | :---: | :---: | :---: | :---: | :--- |
+| **1** | 0.3611 | 0.5568 | 73.10% | 0.7111 | $9.89 \times 10^{-4}$ | Saved new best checkpoint |
+| **2** | 0.1692 | 0.2297 | 94.43% | 0.9440 | $9.57 \times 10^{-4}$ | Saved new best checkpoint |
+| **3** | 0.1222 | 0.1370 | 96.20% | 0.9619 | $9.05 \times 10^{-4}$ | Saved new best checkpoint |
+| **4** | 0.1071 | 0.1052 | 96.06% | 0.9607 | $8.36 \times 10^{-4}$ | — |
+| **5** | 0.0744 | 0.0900 | 96.88% | 0.9686 | $7.52 \times 10^{-4}$ | Saved new best checkpoint |
+| **6** | 0.0762 | 0.0593 | 98.37% | 0.9837 | $6.58 \times 10^{-4}$ | Saved new best checkpoint |
+| **7** | 0.0614 | 0.0619 | 98.10% | 0.9811 | $5.57 \times 10^{-4}$ | — |
+| **8** | 0.0482 | 0.0777 | 98.10% | 0.9810 | $4.53 \times 10^{-4}$ | — |
+| **9** | 0.0400 | 0.0787 | 97.01% | 0.9699 | $3.52 \times 10^{-4}$ | — |
+| **10** | 0.0453 | 0.0527 | 98.23% | 0.9823 | $2.58 \times 10^{-4}$ | — |
+| **11** | 0.0250 | 0.0657 | 97.83% | 0.9781 | $1.74 \times 10^{-4}$ | — |
+| **12** | 0.0344 | 0.0696 | 96.88% | 0.9684 | $1.05 \times 10^{-4}$ | — |
+| **13** | 0.0265 | 0.0488 | 98.23% | 0.9823 | $5.28 \times 10^{-5}$ | — |
+| **14** | **0.0275** | **0.0434** | **98.78%** | **0.9878** | **$2.08 \times 10^{-5}$** | **Saved canonical best checkpoint** |
+| **15** | 0.0151 | 0.0461 | 98.64% | 0.9864 | $1.00 \times 10^{-5}$ | Final epoch completed |
+
+*Artifacts: `checkpoints/task2/classifier_best.pt`, `results/task2/classifier-baseline_metrics.json`, `results/task2/classifier-baseline_curves.png`, `results/task2/classifier-baseline_confusion_matrix.png`.*
+
+### Per-Class Performance on Validation Manifest (736 Images)
+
+| Corruption Class | True Count | Precision | Recall | F1-Score | Detection Accuracy (%) |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Clean ($0$)** | 184 | 0.9781 | 0.9728 | 0.9755 | 97.28% |
+| **Salt-and-Pepper ($1$)** | 184 | 1.0000 | 0.9946 | 0.9973 | 99.46% |
+| **Gaussian Blur ($2$)** | 184 | 0.9891 | 0.9837 | 0.9864 | 98.37% |
+| **Rectangular Occlusion ($3$)** | 184 | 0.9840 | 1.0000 | 0.9919 | 100.00% |
+| **Overall Macro Average** | **736** | **0.9878** | **0.9878** | **0.9878** | **98.78%** |
+
+### Normalized Confusion Matrix ($4 \times 4$)
+
+$$\begin{pmatrix}
+0.9728 & 0.0000 & 0.0109 & 0.0163 \\
+0.0054 & 0.9946 & 0.0000 & 0.0000 \\
+0.0163 & 0.0000 & 0.9837 & 0.0000 \\
+0.0000 & 0.0000 & 0.0000 & 1.0000
+\end{pmatrix}$$
+
+*Predicted labels on horizontal axis, true labels on vertical axis. Clear diagonal dominance confirms strong discriminative capability across all 4 modes.*
 
 ### Verification
-- Classifier training converges stably over 15–20 epochs without divergence.
-- Validation accuracy exceeds the $85\%$ minimum baseline threshold.
-- Confusion matrix demonstrates clear diagonal dominance across all 4 classes.
+- **Convergence**: Stably converged over 15 epochs without gradient explosion or instability.
+- **Threshold Exceeded**: Reached **98.78% validation accuracy** and **0.9878 Macro-F1**, substantially exceeding the $85.0\%$ baseline target (+13.78%).
+- **Diagonal Dominance**: Minimal cross-class confusion ($< 1.7\%$ misrouting rate).
+- **Unit Tests**: 5 test cases in `tests/test_task2_train.py` passed (total 79 test suite passing).
 
-### Files Changed
-- `src/task2/classifier.py`
+### Files Changed / Created
+- `src/task2/dataset.py`
 - `src/task2/train_classifier.py`
+- `src/task2/visualization.py`
+- `tests/test_task2_train.py`
+- `checkpoints/task2/classifier_best.pt`
+- `results/task2/classifier-baseline_metrics.json`
+- `results/task2/classifier-baseline_curves.png`
+- `results/task2/classifier-baseline_confusion_matrix.png`
 
 ---
 
