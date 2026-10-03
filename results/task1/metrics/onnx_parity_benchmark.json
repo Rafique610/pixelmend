@@ -1,0 +1,51 @@
+{
+  "export_metadata": {
+    "checkpoint": "checkpoints/task1/best_model.pth",
+    "onnx_model": "models\\onnx\\task1_universal_ae.onnx",
+    "opset_version": 17,
+    "model_parameters": 4913091,
+    "file_size_bytes": 19661088
+  },
+  "parity": {
+    "batch_1": {
+      "batch_size": 1,
+      "max_abs_diff": 1.7881393432617188e-07,
+      "mean_abs_diff": 1.1496013030409813e-09,
+      "is_close": true
+    },
+    "batch_4": {
+      "batch_size": 4,
+      "max_abs_diff": 1.7881393432617188e-07,
+      "mean_abs_diff": 1.1750671546906233e-09,
+      "is_close": true
+    },
+    "batch_8": {
+      "batch_size": 8,
+      "max_abs_diff": 2.384185791015625e-07,
+      "mean_abs_diff": 1.1812820721601724e-09,
+      "is_close": true
+    },
+    "all_passed": true,
+    "tolerance_atol": 1e-05
+  },
+  "benchmark": {
+    "pytorch": {
+      "mean_ms": 31.54943349712994,
+      "median_ms": 28.356049966532737,
+      "p95_ms": 45.780114934314035,
+      "p99_ms": 73.84548210422506,
+      "std_ms": 9.504324154710297,
+      "throughput_fps": 31.69629020727013
+    },
+    "onnxruntime": {
+      "mean_ms": 15.086298997630365,
+      "median_ms": 14.819999982137233,
+      "p95_ms": 17.10078500327654,
+      "p99_ms": 19.80611894279717,
+      "std_ms": 1.2220014545932774,
+      "throughput_fps": 66.28530961484138
+    },
+    "speedup_factor": 2.091263967530106,
+    "num_runs": 200
+  }
+}

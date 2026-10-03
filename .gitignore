@@ -20,6 +20,8 @@ data/*
 checkpoints/*
 !checkpoints/.gitkeep
 !checkpoints/**/README.md
+models/**/*.onnx
+!models/**/.gitkeep
 
 # --- Optuna Studies Database ---
 optuna/*.db
