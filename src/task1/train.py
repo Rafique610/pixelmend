@@ -24,6 +24,8 @@ from src.shared.tracking import ExperimentTracker
 from src.shared.visualization import make_reconstruction_grid, plot_training_curves
 from src.task1.autoencoder import UniversalAutoencoder
 
+CHANNELS_MAP = {"compact": (32, 64, 128), "standard": (32, 64, 128, 256), "wide": (48, 96, 192, 256)}
+
 
 class CachedPetDataset(Dataset):
     """Memory-cached dataset for fast validation."""
@@ -42,8 +44,7 @@ class DynamicCachedTrainDataset(Dataset):
     """Dynamic corruption dataset using pre-loaded clean tensors for fast training."""
 
     def __init__(self, clean_tensors: List[torch.Tensor], image_size: int = 128):
-        self.clean_tensors = clean_tensors
-        self.image_size = image_size
+        self.clean_tensors, self.image_size = clean_tensors, image_size
 
     def __len__(self) -> int:
         return len(self.clean_tensors)
@@ -51,8 +52,7 @@ class DynamicCachedTrainDataset(Dataset):
     def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor, int]:
         clean = self.clean_tensors[idx]
         c_type, label, params = sample_random_corruption(rng=None, image_size=self.image_size)
-        corrupted = apply_corruption(clean, c_type, params)
-        return corrupted, clean, label
+        return apply_corruption(clean, c_type, params), clean, label
 
 
 def train_one_epoch(
@@ -67,8 +67,7 @@ def train_one_epoch(
 ) -> float:
     """Run one epoch of training over dynamic corruptions with live batch heartbeat."""
     model.train()
-    total_loss, num_batches = 0.0, len(dataloader)
-    epoch_start = time.time()
+    total_loss, num_batches, epoch_start = 0.0, len(dataloader), time.time()
 
     for batch_idx, (corrupted, clean, _) in enumerate(dataloader, 1):
         b_start = time.time()
@@ -181,19 +180,19 @@ def get_dataloaders(
 
 def run_training(
     epochs: int = 5,
-    batch_size: int = 32,
-    lr: float = 1e-3,
-    weight_decay: float = 1e-4,
-    alpha: float = 0.8,
+    batch_size: int = 16,
+    lr: float = 5.44e-4,
+    weight_decay: float = 1.57e-4,
+    alpha: float = 0.90,
     bottleneck_dim: int = 256,
     channels: Tuple[int, ...] = (32, 64, 128, 256),
     use_residual: bool = True,
     use_skips: bool = False,
-    dropout: float = 0.0,
+    dropout: float = 0.25,
     patience: int = 8,
     checkpoint_path: Optional[Path] = None,
     experiment_name: str = "task1-universal-ae",
-    run_name: str = "baseline",
+    run_name: str = "final",
     sample_interval: int = 5,
     quick: bool = False,
     cache: bool = True,
@@ -204,7 +203,8 @@ def run_training(
     cfg = settings or get_settings()
     ckpt_dir = cfg.checkpoints_dir / "task1"
     ckpt_dir.mkdir(parents=True, exist_ok=True)
-    ckpt_out = checkpoint_path or (ckpt_dir / f"{run_name}_best.pth")
+    default_ckpt_name = "best_model.pth" if run_name == "final" else f"{run_name}_best.pth"
+    ckpt_out = checkpoint_path or (ckpt_dir / default_ckpt_name)
 
     print(f"Initializing Task 1 Training on {cfg.torch_device} | Run: {run_name} | alpha: {alpha}", flush=True)
     model = UniversalAutoencoder(
@@ -297,13 +297,16 @@ def run_training(
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Train Task 1 Universal Autoencoder")
     parser.add_argument("--epochs", type=int, default=5)
-    parser.add_argument("--batch-size", type=int, default=32)
-    parser.add_argument("--lr", type=float, default=1e-3)
-    parser.add_argument("--weight-decay", type=float, default=1e-4)
-    parser.add_argument("--alpha", type=float, default=0.8)
+    parser.add_argument("--batch-size", type=int, default=16)
+    parser.add_argument("--lr", type=float, default=5.44e-4)
+    parser.add_argument("--weight-decay", type=float, default=1.57e-4)
+    parser.add_argument("--alpha", type=float, default=0.90)
     parser.add_argument("--bottleneck-dim", type=int, default=256)
+    parser.add_argument("--dropout", type=float, default=0.25)
+    parser.add_argument("--channels", type=str, default="standard")
     parser.add_argument("--patience", type=int, default=8)
-    parser.add_argument("--run-name", type=str, default="baseline")
+    parser.add_argument("--run-name", type=str, default="final")
+    parser.add_argument("--from-config", type=str, default=None, help="Path to best_hyperparams.json")
     parser.add_argument("--max-train-samples", type=int, default=None)
     parser.add_argument("--quick", action="store_true", help="Quick smoke run")
     parser.add_argument("--no-cache", action="store_true", help="Disable in-memory caching")
@@ -312,16 +315,21 @@ def parse_args() -> argparse.Namespace:
 
 if __name__ == "__main__":
     args = parse_args()
+    lr, bs, b_dim, alpha, wd, dropout = args.lr, args.batch_size, args.bottleneck_dim, args.alpha, args.weight_decay, args.dropout
+    channels = CHANNELS_MAP.get(args.channels, (32, 64, 128, 256))
+
+    if args.from_config and Path(args.from_config).exists():
+        with open(args.from_config, "r", encoding="utf-8") as f:
+            cfg_data = json.load(f)
+            params = cfg_data.get("best_params", cfg_data)
+            lr, bs, b_dim = params.get("learning_rate", lr), params.get("batch_size", bs), params.get("bottleneck_dim", b_dim)
+            alpha, wd, dropout = params.get("alpha", alpha), params.get("weight_decay", wd), params.get("dropout", dropout)
+            channels = CHANNELS_MAP.get(params.get("channel_depth", "standard"), channels)
+            print(f"Loaded config from {args.from_config}: lr={lr:.2e}, alpha={alpha}, bs={bs}, dropout={dropout}", flush=True)
+
     run_training(
-        epochs=args.epochs,
-        batch_size=args.batch_size,
-        lr=args.lr,
-        weight_decay=args.weight_decay,
-        alpha=args.alpha,
-        bottleneck_dim=args.bottleneck_dim,
-        patience=args.patience,
-        run_name=args.run_name,
-        max_train_samples=args.max_train_samples,
-        quick=args.quick,
+        epochs=args.epochs, batch_size=bs, lr=lr, weight_decay=wd, alpha=alpha,
+        bottleneck_dim=b_dim, channels=channels, dropout=dropout, patience=args.patience,
+        run_name=args.run_name, max_train_samples=args.max_train_samples, quick=args.quick,
         cache=not args.no_cache,
     )

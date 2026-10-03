@@ -79,6 +79,7 @@ desktop.ini
 .coverage
 htmlcov/
 .ruff_cache/
+scratch/
 
 # --- Evaluation Output & Large Visual Dumps ---
 results/*.png

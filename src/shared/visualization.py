@@ -7,7 +7,8 @@ and training curve plotters for Tasks 1 through 4.
 
 from __future__ import annotations
 
-from typing import Any
+from pathlib import Path
+from typing import Any, Optional, Union
 
 import matplotlib
 
@@ -186,3 +187,62 @@ def log_epoch_visuals(
     metrics = evaluate_metrics(restored, target)
     tracker.log_metrics({f"{prefix}_{k}": v for k, v in metrics.items()}, step=step)
     return metrics
+
+
+def plot_qualitative_quads(
+    samples: list[dict[str, Any]],
+    output_path: Optional[Union[str, Path]] = None,
+    title: str = "Test Set Qualitative Restorations",
+    cmap: str = "inferno",
+) -> plt.Figure:
+    """Render N-row by 4-column figure of qualitative restorations and error maps."""
+    n_rows = len(samples)
+    fig, axes = plt.subplots(n_rows, 4, figsize=(14, max(3.0 * n_rows, 3.5)), squeeze=False)
+    fig.suptitle(title, fontsize=14, fontweight="bold", y=0.995)
+
+    col_headers = [
+        "Ground Truth Clean",
+        "Corrupted Input",
+        "Model Restoration",
+        "Absolute Error (|Target - Restored|)",
+    ]
+    for col_idx, h in enumerate(col_headers):
+        axes[0, col_idx].set_title(h, fontsize=11, fontweight="bold", pad=8)
+
+    colormap = matplotlib.colormaps[cmap]
+    for row_idx, item in enumerate(samples):
+        clean = item["clean"].detach().cpu().permute(1, 2, 0).numpy().clip(0.0, 1.0)
+        corr = item["corrupted"].detach().cpu().permute(1, 2, 0).numpy().clip(0.0, 1.0)
+        rest = item["restored"].detach().cpu().permute(1, 2, 0).numpy().clip(0.0, 1.0)
+
+        diff = np.abs(clean - rest).mean(axis=-1)
+        diff_norm = np.clip(diff / 0.5, 0.0, 1.0)
+        heatmap = colormap(diff_norm)[:, :, :3]
+
+        axes[row_idx, 0].imshow(clean)
+        axes[row_idx, 1].imshow(corr)
+        axes[row_idx, 2].imshow(rest)
+        axes[row_idx, 3].imshow(heatmap)
+
+        for col_idx in range(4):
+            axes[row_idx, col_idx].set_xticks([])
+            axes[row_idx, col_idx].set_yticks([])
+
+        info_parts = []
+        if "label_str" in item:
+            info_parts.append(str(item["label_str"]))
+        if "psnr" in item and "ssim" in item:
+            info_parts.append(f"PSNR: {item['psnr']:.2f}dB | SSIM: {item['ssim']:.4f}")
+        if "notes" in item:
+            info_parts.append(str(item["notes"]))
+
+        ylabel = "\n".join(info_parts)
+        if ylabel:
+            axes[row_idx, 0].set_ylabel(ylabel, fontsize=8.5, fontweight="semibold", rotation=0, labelpad=135, va="center", ha="right")
+
+    fig.tight_layout()
+    if output_path is not None:
+        p = Path(output_path)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        fig.savefig(p, dpi=180, bbox_inches="tight")
+    return fig
