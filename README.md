@@ -1,4 +1,9 @@
-# AI-4009 Generative AI â€” Assignment #1
+# AI-4009 Generative AI — Assignment #1: PixelMend
+
+**Author**: Muhammad Rafique (`i230747@isb.nu.edu.pk`)  
+**Institution**: FAST National University of Computer and Emerging Sciences (FAST-NUCES), Islamabad  
+**Repository**: [https://github.com/Rafique610/pixelmend](https://github.com/Rafique610/pixelmend)  
+**Video Demonstration**: [https://www.youtube.com/watch?v=mO7WHRdSPoE](https://www.youtube.com/watch?v=mO7WHRdSPoE)  
 
 End-to-end implementation and deployment of four generative computer vision systems:
 1. **Universal Denoising Autoencoder** (multi-corruption blind restoration)
@@ -12,12 +17,12 @@ Integrated and deployed through a single **FastAPI + React (Tailwind CSS)** web 
 
 ## Evaluator Quick Start (CPU-only, no GPU required)
 
-### Option A â€” Docker (one command)
+### Option A — Docker (one command)
 
 Requirements: Docker Desktop / Docker Engine with Compose v2. Nothing else.
 
 ```bash
-git clone <repo-url> pixelmend && cd pixelmend
+git clone https://github.com/Rafique610/pixelmend.git pixelmend && cd pixelmend
 ls models/onnx/*.onnx                 # must list 7 files (~150 MB total, committed to git)
 docker compose up --build
 ```

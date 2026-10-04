@@ -9,8 +9,7 @@
 \usepackage{xcolor}
 \usepackage{booktabs}
 \usepackage{multirow}
-\usepackage{subcaption}
-\usepackage{url}
+\usepackage{xurl}
 \usepackage{hyperref}
 
 \hypersetup{
@@ -27,11 +26,11 @@
 
 \title{PixelMend: Comprehensive Generative Computer Vision Architectures for Multi-Corruption Blind Image Restoration and Style-Conditioned Face-to-Sketch Synthesis}
 
-\author{\IEEEauthorblockN{Rafique}
+\author{\IEEEauthorblockN{Muhammad Rafique}
 \IEEEauthorblockA{\textit{Department of Computer Science} \\
 \textit{National University of Computer and Emerging Sciences (FAST-NUCES)}\\
 Islamabad, Pakistan \\
-Email: student@nu.edu.pk}
+Email: i230747@isb.nu.edu.pk}
 }
 
 \maketitle
@@ -84,7 +83,7 @@ Tasks 1, 2, and 3 utilize the Oxford-IIIT Pet dataset \cite{parkhi2012cats}, con
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.95\linewidth]{figures/oxford_pets.png}
+    \includegraphics[width=0.95\linewidth]{figures/oxford_pets.jpg}
     \caption{Representative samples from the Oxford-IIIT Pet dataset normalized to $128\times 128$ RGB resolution.}
     \label{fig:oxford_pets}
 \end{figure}
@@ -111,7 +110,7 @@ During training, corruptions are applied stochastically at runtime with equal pr
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.95\linewidth]{figures/corruptions.png}
+    \includegraphics[width=0.95\linewidth]{figures/corruptions.jpg}
     \caption{Deterministic corruption benchmark grid illustrating clean, salt-and-pepper, Gaussian blur, and rectangular occlusion across mild, medium, and severe tiers.}
     \label{fig:corruptions}
 \end{figure}
@@ -129,7 +128,7 @@ We partition FS2K into 1,600 training pairs, 204 validation pairs, and 200 held-
 \subsection{Model Architecture \& Bottleneck Constraints}
 The Universal Autoencoder comprises a 4-stage convolutional encoder and a symmetric 4-stage decoder. Spatial downsampling is achieved via strided convolutions ($s=2$), reducing the spatial footprint from $128\times 128$ to an $8\times 8$ latent bottleneck with 256 channels (compression ratio of $24:1$ relative to the uncompressed input). Each stage incorporates Conv2d, BatchNorm2d, and LeakyReLU ($\alpha=0.2$). The decoder employs transposed convolutions followed by a final Sigmoid activation restricting pixel intensities to $[0, 1]$.
 
-\subsection{Loss Formulation \& $\alpha$-Spectrum Analysis}
+\subsection{Loss Formulation \& \texorpdfstring{$\alpha$}{alpha}-Spectrum Analysis}
 The training objective balances absolute pixel reconstruction error and perceptual structural similarity:
 \begin{equation}
     \mathcal{L}_{\text{total}} = \alpha \mathcal{L}_1(x, \hat{x}) + (1 - \alpha) \mathcal{L}_{\text{SSIM}}(x, \hat{x})
@@ -155,6 +154,7 @@ On the full 36,690-condition held-out test set, the Universal Autoencoder achiev
 \caption{Task 1 Universal Autoencoder Performance Across Corruption Types and Severities (36,690 Test Evaluations)}
 \label{tab:task1_results}
 \centering
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{lcccc}
 \toprule
 \textbf{Corruption Condition} & \textbf{Mild} & \textbf{Medium} & \textbf{Severe} & \textbf{Mean PSNR} \\
@@ -166,19 +166,20 @@ Rectangular Occlusion & 19.69 & 18.72 & 17.26 & 18.56 dB \\
 \midrule
 \textbf{Overall Composite} & \multicolumn{4}{c}{\textbf{20.16 dB} (SSIM: \textbf{0.5935}, MAE: \textbf{0.0742})} \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.95\linewidth]{figures/task1_reconstructions.png}
+    \includegraphics[width=0.95\linewidth]{figures/task1_reconstructions.jpg}
     \caption{Task 1 Universal Autoencoder reconstructions with corresponding Turbo residual error heatmaps ($|x - \hat{x}|$).}
     \label{fig:task1_qualitative}
 \end{figure}
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.95\linewidth]{figures/task1_failures.png}
+    \includegraphics[width=0.95\linewidth]{figures/task1_failures.jpg}
     \caption{Representative failure cases of Task 1 on extreme occlusion (35\% area) revealing structural hallucination limits.}
     \label{fig:task1_failures}
 \end{figure}
@@ -214,6 +215,7 @@ We compare Predicted Routing (using the learned classifier) against an Oracle Ro
 \caption{System Comparison: Universal AE vs. Hard Router (Oracle vs. Predicted) on Held-Out Test Set}
 \label{tab:task2_comparison}
 \centering
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{lcccc}
 \toprule
 \textbf{Metric} & \textbf{Universal} & \textbf{Oracle Router} & \textbf{Predicted} & \textbf{Routing Gap} \\
@@ -226,19 +228,20 @@ S\&P PSNR (dB) & \textbf{20.75} & 18.37 & 18.08 & $+0.29$ dB \\
 Blur PSNR (dB) & \textbf{20.92} & 17.65 & 19.88 & $-2.23$ dB \\
 Occlusion PSNR & \textbf{18.56} & 16.97 & 17.01 & $-0.04$ dB \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.95\linewidth]{figures/task2_reconstructions.png}
+    \includegraphics[width=0.95\linewidth]{figures/task2_reconstructions.jpg}
     \caption{Reconstruction comparison across the hard-routing pipeline.}
     \label{fig:task2_reconstructions}
 \end{figure}
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.95\linewidth]{figures/task2_failures.png}
+    \includegraphics[width=0.95\linewidth]{figures/task2_failures.jpg}
     \caption{Routing failure analysis: misclassifying mild blur as clean bypass preserves blurriness, creating sharp residual error spikes.}
     \label{fig:task2_failures}
 \end{figure}
@@ -281,7 +284,7 @@ Optuna hyperparameter tuning identified the optimal learned temperature paramete
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.95\linewidth]{figures/task3_routing_galleries.png}
+    \includegraphics[width=0.95\linewidth]{figures/task3_routing_galleries.jpg}
     \caption{Dynamic routing weight allocation across varying corruption levels.}
     \label{fig:task3_galleries}
 \end{figure}
@@ -300,6 +303,7 @@ Table~\ref{tab:three_system_comparison} presents the unified benchmark comparing
 \caption{System Comparison: Tasks 1, 2, and 3 Across Comprehensive Benchmark Metrics (7,340 Test Evaluations)}
 \label{tab:three_system_comparison}
 \centering
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{lcccc}
 \toprule
 \textbf{Restoration Method} & \textbf{Overall PSNR} & \textbf{SSIM} & \textbf{MAE} & \textbf{CPU Latency} \\
@@ -309,19 +313,20 @@ Task 2: Hard Router (Pred) & 23.79 dB & 0.4958 & 0.0917 & 31.39 ms \\
 Task 2: Hard Router (Oracle) & 24.00 dB & 0.4952 & 0.0917 & 31.39 ms \\
 \textbf{Task 3: Soft MoE (Ours)} & 20.03 dB & \textbf{0.6495} & \textbf{0.0673} & 80.87 ms \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.95\linewidth]{figures/task3_comparison.png}
+    \includegraphics[width=0.95\linewidth]{figures/task3_comparison.jpg}
     \caption{Visual comparative restoration: Universal (Task 1) vs. Hard-Routed (Task 2) vs. Soft MoE (Task 3).}
     \label{fig:task3_comparison}
 \end{figure}
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.95\linewidth]{figures/task3_failures.png}
+    \includegraphics[width=0.95\linewidth]{figures/task3_failures.jpg}
     \caption{Task 3 failure cases on compound occlusion and high-frequency textural detail.}
     \label{fig:task3_failures}
 \end{figure}
@@ -351,6 +356,7 @@ On the held-out FS2K test set, the generator achieves quantitative metrics summa
 \caption{Task 4 Face-to-Sketch Performance on Held-Out FS2K Test Set}
 \label{tab:task4_results}
 \centering
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{lcccc}
 \toprule
 \textbf{Artistic Style} & \textbf{$\text{L}_1$ Error} & \textbf{PSNR (dB)} & \textbf{SSIM} & \textbf{LPIPS} \\
@@ -361,26 +367,27 @@ Style 3 (Tonal Shaded Art) & \textbf{0.0687} & \textbf{18.51} & \textbf{0.5913} 
 \midrule
 \textbf{Overall Mean} & \textbf{0.1074} & \textbf{15.38} & \textbf{0.4724} & \textbf{0.2515} \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.95\linewidth]{figures/task4_styles.png}
+    \includegraphics[width=0.95\linewidth]{figures/task4_styles.jpg}
     \caption{Stylistic diversity: synthesis across Style 1 (pencil contour), Style 2 (cross-hatching), and Style 3 (tonal art).}
     \label{fig:task4_styles}
 \end{figure}
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.95\linewidth]{figures/task4_results.png}
+    \includegraphics[height=0.30\textheight, keepaspectratio]{figures/task4_results.jpg}
     \caption{Held-out test portrait translation with pixel-level ground truth comparison.}
     \label{fig:task4_results}
 \end{figure}
 
 \begin{figure}[t]
     \centering
-    \includegraphics[width=0.95\linewidth]{figures/task4_failures.png}
+    \includegraphics[width=0.95\linewidth]{figures/task4_failures.jpg}
     \caption{Task 4 failure modes on high-contrast accessories and eyeglasses.}
     \label{fig:task4_failures}
 \end{figure}
@@ -405,6 +412,7 @@ All seven production models were exported to ONNX format (opset 17). Mathematica
 \caption{Production ONNX Model Metrics and Pure CPU Inference Latency ($128\times 128$, Batch Size = 1)}
 \label{tab:onnx_benchmark}
 \centering
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{lcccc}
 \toprule
 \textbf{Model Target} & \textbf{Parameters} & \textbf{Size} & \textbf{CPU Latency} & \textbf{Parity Pass} \\
@@ -417,7 +425,8 @@ Task 2 Occ Specialist & 4.91 M & 18.75 MB & 28.77 ms & Passed ($< 10^{-5}$) \\
 Task 3 Soft MoE Graph & 15.12 M & 57.76 MB & 80.87 ms & Passed ($< 10^{-5}$) \\
 Task 4 cGAN Generator & 6.83 M & 26.08 MB & 28.44 ms & Passed ($< 10^{-5}$) \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \subsection{FastAPI Backend \& React Frontend}
@@ -440,7 +449,7 @@ This work systematically evaluated four generative vision systems, providing emp
 \section{Artifacts, Code Repository \& Demonstration}
 \begin{itemize}
     \item \textbf{GitHub Repository}: \url{https://github.com/Rafique610/pixelmend}
-    \item \textbf{Demonstration Video}: \url{https://www.youtube.com/watch?v=placeholder}
+    \item \textbf{Demonstration Video}: \url{https://www.youtube.com/watch?v=mO7WHRdSPoE}
 \end{itemize}
 
 \section{AI-Use Disclosure Statement}

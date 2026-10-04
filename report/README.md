@@ -49,8 +49,8 @@ pdflatex main.tex
 
 ---
 
-## Customizing Before Final Submission
-Before submitting your PDF:
-1. **Author Name & Email**: Replace the placeholder `student@nu.edu.pk` with your official university email in `main.tex`.
-2. **YouTube Video Demonstration**: Replace `https://www.youtube.com/watch?v=placeholder` in Appendix A with your 5–7 minute walkthrough video link.
-3. **GitHub Repository**: Verify the repository link in Appendix A matches your submission repo.
+## Submission Metadata
+- **Author**: Muhammad Rafique (`i230747@isb.nu.edu.pk`)
+- **Institution**: Department of Computer Science, National University of Computer and Emerging Sciences (FAST-NUCES), Islamabad
+- **GitHub Repository**: [https://github.com/Rafique610/pixelmend](https://github.com/Rafique610/pixelmend)
+- **Demonstration Video**: [https://www.youtube.com/watch?v=mO7WHRdSPoE](https://www.youtube.com/watch?v=mO7WHRdSPoE)
