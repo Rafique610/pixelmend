@@ -276,3 +276,16 @@ def build_soft_moe(
             map_location=map_location,
         )
     return model
+
+
+class ExportWrapper(nn.Module):
+    """Encapsulates SoftMoE fixing temperature tau for atomic ONNX graph export."""
+
+    def __init__(self, moe_model: SoftMoE, tau: float = 1.0) -> None:
+        super().__init__()
+        self.moe_model = moe_model
+        self.tau = float(tau)
+
+    def forward(self, input_image: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+        restored, routing_weights, _ = self.moe_model(input_image, tau=self.tau)
+        return restored, routing_weights

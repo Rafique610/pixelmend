@@ -143,7 +143,9 @@ def train_two_stage(
     metrics_path.parent.mkdir(parents=True, exist_ok=True)
 
     tracker = ExperimentTracker()
-    run_name = "task3-moe-smoke" if getattr(args, "smoke_test", False) else "task3-moe-baseline"
+    run_name = getattr(args, "run_name", None) or (
+        "task3-moe-smoke" if getattr(args, "smoke_test", False) else "task3-moe-baseline"
+    )
 
     with tracker.run(run_name=run_name, experiment_name="genai-task3-soft-moe"):
         tracker.log_params(vars(args))

@@ -1,0 +1,296 @@
+{
+  "subsample_ratio": 0.2,
+  "total_evaluated": 7340,
+  "gpu_latencies_ms": {
+    "task1_universal": 5.89,
+    "task2_predicted": 1.78,
+    "task2_oracle": 5.95,
+    "task3_soft_moe": 18.17
+  },
+  "methods": {
+    "task1_univ": {
+      "overall": {
+        "psnr": 20.08,
+        "ssim": 0.589,
+        "mae": 0.0754
+      },
+      "per_corruption": {
+        "clean": {
+          "psnr": 20.82,
+          "ssim": 0.6132,
+          "mae": 0.0702
+        },
+        "salt_and_pepper": {
+          "psnr": 20.68,
+          "ssim": 0.6024,
+          "mae": 0.0714
+        },
+        "gaussian_blur": {
+          "psnr": 20.85,
+          "ssim": 0.6073,
+          "mae": 0.0704
+        },
+        "occlusion": {
+          "psnr": 18.47,
+          "ssim": 0.5492,
+          "mae": 0.0861
+        }
+      },
+      "per_severity": {
+        "clean": {
+          "psnr": 20.82,
+          "ssim": 0.6132
+        },
+        "sp_mild": {
+          "psnr": 20.8,
+          "ssim": 0.6106
+        },
+        "sp_medium": {
+          "psnr": 20.71,
+          "ssim": 0.6041
+        },
+        "sp_severe": {
+          "psnr": 20.51,
+          "ssim": 0.5926
+        },
+        "blur_mild": {
+          "psnr": 20.87,
+          "ssim": 0.613
+        },
+        "blur_medium": {
+          "psnr": 20.88,
+          "ssim": 0.6094
+        },
+        "blur_severe": {
+          "psnr": 20.79,
+          "ssim": 0.5994
+        },
+        "occl_mild": {
+          "psnr": 19.64,
+          "ssim": 0.5826
+        },
+        "occl_medium": {
+          "psnr": 18.62,
+          "ssim": 0.5534
+        },
+        "occl_severe": {
+          "psnr": 17.14,
+          "ssim": 0.5116
+        }
+      }
+    },
+    "task2_oracle": {
+      "overall": {
+        "psnr": 24.0,
+        "ssim": 0.4952,
+        "mae": 0.0917
+      },
+      "per_corruption": {
+        "clean": {
+          "psnr": 80.0,
+          "ssim": 1.0,
+          "mae": 0.0
+        },
+        "salt_and_pepper": {
+          "psnr": 18.52,
+          "ssim": 0.4633,
+          "mae": 0.0929
+        },
+        "gaussian_blur": {
+          "psnr": 17.77,
+          "ssim": 0.4402,
+          "mae": 0.1026
+        },
+        "occlusion": {
+          "psnr": 17.04,
+          "ssim": 0.4137,
+          "mae": 0.1103
+        }
+      },
+      "per_severity": {
+        "clean": {
+          "psnr": 80.0,
+          "ssim": 1.0
+        },
+        "sp_mild": {
+          "psnr": 18.53,
+          "ssim": 0.4633
+        },
+        "sp_medium": {
+          "psnr": 18.53,
+          "ssim": 0.4638
+        },
+        "sp_severe": {
+          "psnr": 18.51,
+          "ssim": 0.4629
+        },
+        "blur_mild": {
+          "psnr": 17.79,
+          "ssim": 0.4415
+        },
+        "blur_medium": {
+          "psnr": 17.78,
+          "ssim": 0.4404
+        },
+        "blur_severe": {
+          "psnr": 17.75,
+          "ssim": 0.4387
+        },
+        "occl_mild": {
+          "psnr": 17.46,
+          "ssim": 0.4253
+        },
+        "occl_medium": {
+          "psnr": 17.13,
+          "ssim": 0.4156
+        },
+        "occl_severe": {
+          "psnr": 16.54,
+          "ssim": 0.4002
+        }
+      }
+    },
+    "task2_pred": {
+      "overall": {
+        "psnr": 23.79,
+        "ssim": 0.4958,
+        "mae": 0.0917
+      },
+      "per_corruption": {
+        "clean": {
+          "psnr": 77.54,
+          "ssim": 0.9794,
+          "mae": 0.0044
+        },
+        "salt_and_pepper": {
+          "psnr": 18.53,
+          "ssim": 0.4636,
+          "mae": 0.0928
+        },
+        "gaussian_blur": {
+          "psnr": 17.79,
+          "ssim": 0.441,
+          "mae": 0.1025
+        },
+        "occlusion": {
+          "psnr": 17.12,
+          "ssim": 0.4217,
+          "mae": 0.1089
+        }
+      },
+      "per_severity": {
+        "clean": {
+          "psnr": 77.54,
+          "ssim": 0.9794
+        },
+        "sp_mild": {
+          "psnr": 18.53,
+          "ssim": 0.4642
+        },
+        "sp_medium": {
+          "psnr": 18.53,
+          "ssim": 0.4638
+        },
+        "sp_severe": {
+          "psnr": 18.51,
+          "ssim": 0.4629
+        },
+        "blur_mild": {
+          "psnr": 17.85,
+          "ssim": 0.4438
+        },
+        "blur_medium": {
+          "psnr": 17.78,
+          "ssim": 0.4404
+        },
+        "blur_severe": {
+          "psnr": 17.75,
+          "ssim": 0.4387
+        },
+        "occl_mild": {
+          "psnr": 17.69,
+          "ssim": 0.4487
+        },
+        "occl_medium": {
+          "psnr": 17.13,
+          "ssim": 0.4162
+        },
+        "occl_severe": {
+          "psnr": 16.54,
+          "ssim": 0.4002
+        }
+      }
+    },
+    "task3_moe": {
+      "overall": {
+        "psnr": 20.03,
+        "ssim": 0.6495,
+        "mae": 0.0673
+      },
+      "per_corruption": {
+        "clean": {
+          "psnr": 25.89,
+          "ssim": 0.8952,
+          "mae": 0.04
+        },
+        "salt_and_pepper": {
+          "psnr": 19.9,
+          "ssim": 0.4479,
+          "mae": 0.0602
+        },
+        "gaussian_blur": {
+          "psnr": 22.53,
+          "ssim": 0.6951,
+          "mae": 0.058
+        },
+        "occlusion": {
+          "psnr": 15.7,
+          "ssim": 0.7234,
+          "mae": 0.0928
+        }
+      },
+      "per_severity": {
+        "clean": {
+          "psnr": 25.89,
+          "ssim": 0.8952
+        },
+        "sp_mild": {
+          "psnr": 22.03,
+          "ssim": 0.6246
+        },
+        "sp_medium": {
+          "psnr": 19.46,
+          "ssim": 0.4138
+        },
+        "sp_severe": {
+          "psnr": 18.2,
+          "ssim": 0.3054
+        },
+        "blur_mild": {
+          "psnr": 23.96,
+          "ssim": 0.8023
+        },
+        "blur_medium": {
+          "psnr": 22.3,
+          "ssim": 0.682
+        },
+        "blur_severe": {
+          "psnr": 21.34,
+          "ssim": 0.6011
+        },
+        "occl_mild": {
+          "psnr": 17.8,
+          "ssim": 0.8089
+        },
+        "occl_medium": {
+          "psnr": 15.46,
+          "ssim": 0.7295
+        },
+        "occl_severe": {
+          "psnr": 13.85,
+          "ssim": 0.6319
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,341 @@
+{
+  "best_epoch": 4,
+  "best_val_ssim": 0.6907,
+  "best_metrics": {
+    "val_loss": 0.1894,
+    "val_psnr": 21.1,
+    "val_ssim": 0.6907,
+    "val_mae": 0.0613,
+    "val_accuracy": 0.3057,
+    "avg_routing_vector": [
+      0.5791,
+      0.2489,
+      0.0658,
+      0.1061
+    ],
+    "min_utilization": 0.0658,
+    "max_utilization": 0.5791,
+    "collapse_warning": false
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "phase": "warmup",
+      "train": {
+        "loss": 0.2357,
+        "loss_l1": 0.0752,
+        "loss_ssim": 0.4234,
+        "loss_ce": 2.5551,
+        "loss_balance": 0.0344
+      },
+      "val": {
+        "val_loss": 0.2328,
+        "val_psnr": 20.06,
+        "val_ssim": 0.5798,
+        "val_mae": 0.0711,
+        "val_accuracy": 0.4524,
+        "avg_routing_vector": [
+          0.4088,
+          0.1629,
+          0.095,
+          0.3333
+        ],
+        "min_utilization": 0.095,
+        "max_utilization": 0.4088,
+        "collapse_warning": false
+      }
+    },
+    {
+      "epoch": 2,
+      "phase": "warmup",
+      "train": {
+        "loss": 0.2043,
+        "loss_l1": 0.0667,
+        "loss_ssim": 0.349,
+        "loss_ce": 2.2499,
+        "loss_balance": 0.1109
+      },
+      "val": {
+        "val_loss": 0.2034,
+        "val_psnr": 20.51,
+        "val_ssim": 0.6727,
+        "val_mae": 0.0667,
+        "val_accuracy": 0.2364,
+        "avg_routing_vector": [
+          0.5377,
+          0.3121,
+          0.045,
+          0.1051
+        ],
+        "min_utilization": 0.045,
+        "max_utilization": 0.5377,
+        "collapse_warning": true
+      }
+    },
+    {
+      "epoch": 3,
+      "phase": "warmup",
+      "train": {
+        "loss": 0.2,
+        "loss_l1": 0.0654,
+        "loss_ssim": 0.3298,
+        "loss_ce": 2.356,
+        "loss_balance": 0.1462
+      },
+      "val": {
+        "val_loss": 0.1924,
+        "val_psnr": 20.94,
+        "val_ssim": 0.6898,
+        "val_mae": 0.0632,
+        "val_accuracy": 0.3043,
+        "avg_routing_vector": [
+          0.5787,
+          0.2576,
+          0.061,
+          0.1027
+        ],
+        "min_utilization": 0.061,
+        "max_utilization": 0.5787,
+        "collapse_warning": false
+      }
+    },
+    {
+      "epoch": 4,
+      "phase": "joint",
+      "train": {
+        "loss": 0.1936,
+        "loss_l1": 0.0627,
+        "loss_ssim": 0.3165,
+        "loss_ce": 2.3133,
+        "loss_balance": 0.157
+      },
+      "val": {
+        "val_loss": 0.1894,
+        "val_psnr": 21.1,
+        "val_ssim": 0.6907,
+        "val_mae": 0.0613,
+        "val_accuracy": 0.3057,
+        "avg_routing_vector": [
+          0.5791,
+          0.2489,
+          0.0658,
+          0.1061
+        ],
+        "min_utilization": 0.0658,
+        "max_utilization": 0.5791,
+        "collapse_warning": false
+      }
+    },
+    {
+      "epoch": 5,
+      "phase": "joint",
+      "train": {
+        "loss": 0.1928,
+        "loss_l1": 0.0629,
+        "loss_ssim": 0.3163,
+        "loss_ce": 2.261,
+        "loss_balance": 0.153
+      },
+      "val": {
+        "val_loss": 0.1909,
+        "val_psnr": 20.89,
+        "val_ssim": 0.6846,
+        "val_mae": 0.0626,
+        "val_accuracy": 0.2826,
+        "avg_routing_vector": [
+          0.5675,
+          0.255,
+          0.0714,
+          0.1061
+        ],
+        "min_utilization": 0.0714,
+        "max_utilization": 0.5675,
+        "collapse_warning": false
+      }
+    },
+    {
+      "epoch": 6,
+      "phase": "joint",
+      "train": {
+        "loss": 0.1962,
+        "loss_l1": 0.0656,
+        "loss_ssim": 0.3257,
+        "loss_ce": 2.1655,
+        "loss_balance": 0.1439
+      },
+      "val": {
+        "val_loss": 0.1939,
+        "val_psnr": 20.46,
+        "val_ssim": 0.674,
+        "val_mae": 0.0656,
+        "val_accuracy": 0.2514,
+        "avg_routing_vector": [
+          0.5475,
+          0.2561,
+          0.0824,
+          0.114
+        ],
+        "min_utilization": 0.0824,
+        "max_utilization": 0.5475,
+        "collapse_warning": false
+      }
+    },
+    {
+      "epoch": 7,
+      "phase": "joint",
+      "train": {
+        "loss": 0.2006,
+        "loss_l1": 0.0682,
+        "loss_ssim": 0.3344,
+        "loss_ce": 2.1691,
+        "loss_balance": 0.1348
+      },
+      "val": {
+        "val_loss": 0.1945,
+        "val_psnr": 20.42,
+        "val_ssim": 0.6742,
+        "val_mae": 0.0663,
+        "val_accuracy": 0.2541,
+        "avg_routing_vector": [
+          0.5452,
+          0.2679,
+          0.0772,
+          0.1098
+        ],
+        "min_utilization": 0.0772,
+        "max_utilization": 0.5452,
+        "collapse_warning": false
+      }
+    },
+    {
+      "epoch": 8,
+      "phase": "joint",
+      "train": {
+        "loss": 0.1977,
+        "loss_l1": 0.0686,
+        "loss_ssim": 0.3328,
+        "loss_ce": 2.0132,
+        "loss_balance": 0.1233
+      },
+      "val": {
+        "val_loss": 0.1979,
+        "val_psnr": 20.05,
+        "val_ssim": 0.6626,
+        "val_mae": 0.0693,
+        "val_accuracy": 0.2351,
+        "avg_routing_vector": [
+          0.5263,
+          0.2671,
+          0.0881,
+          0.1185
+        ],
+        "min_utilization": 0.0881,
+        "max_utilization": 0.5263,
+        "collapse_warning": false
+      }
+    },
+    {
+      "epoch": 9,
+      "phase": "joint",
+      "train": {
+        "loss": 0.2051,
+        "loss_l1": 0.0706,
+        "loss_ssim": 0.353,
+        "loss_ce": 1.9534,
+        "loss_balance": 0.1141
+      },
+      "val": {
+        "val_loss": 0.1983,
+        "val_psnr": 19.98,
+        "val_ssim": 0.658,
+        "val_mae": 0.0703,
+        "val_accuracy": 0.2391,
+        "avg_routing_vector": [
+          0.5134,
+          0.2659,
+          0.0922,
+          0.1285
+        ],
+        "min_utilization": 0.0922,
+        "max_utilization": 0.5134,
+        "collapse_warning": false
+      }
+    },
+    {
+      "epoch": 10,
+      "phase": "joint",
+      "train": {
+        "loss": 0.2016,
+        "loss_l1": 0.071,
+        "loss_ssim": 0.3443,
+        "loss_ce": 1.9176,
+        "loss_balance": 0.1119
+      },
+      "val": {
+        "val_loss": 0.1981,
+        "val_psnr": 20.0,
+        "val_ssim": 0.659,
+        "val_mae": 0.0699,
+        "val_accuracy": 0.2351,
+        "avg_routing_vector": [
+          0.5133,
+          0.2727,
+          0.0918,
+          0.1222
+        ],
+        "min_utilization": 0.0918,
+        "max_utilization": 0.5133,
+        "collapse_warning": false
+      }
+    },
+    {
+      "epoch": 11,
+      "phase": "joint",
+      "train": {
+        "loss": 0.2023,
+        "loss_l1": 0.0708,
+        "loss_ssim": 0.3492,
+        "loss_ce": 1.8461,
+        "loss_balance": 0.1101
+      },
+      "val": {
+        "val_loss": 0.1989,
+        "val_psnr": 19.91,
+        "val_ssim": 0.6554,
+        "val_mae": 0.0706,
+        "val_accuracy": 0.2364,
+        "avg_routing_vector": [
+          0.5075,
+          0.2694,
+          0.0955,
+          0.1276
+        ],
+        "min_utilization": 0.0955,
+        "max_utilization": 0.5075,
+        "collapse_warning": false
+      }
+    }
+  ],
+  "config": {
+    "warmup_epochs": 3,
+    "joint_epochs": 8,
+    "batch_size": 32,
+    "warmup_lr": 0.001,
+    "gate_lr": 1.7541893487450798e-05,
+    "specialist_lr": 3.5083786974901596e-06,
+    "weight_decay": 0.0001,
+    "tau": 2.526366859545224,
+    "lambda_l1": 0.6293899908000085,
+    "lambda_ssim": 0.37061000919999154,
+    "lambda_ce": 0.011439974749291277,
+    "lambda_bal": 0.06586289317583113,
+    "balance_variant": "l2_deviation",
+    "save_path": "checkpoints/task3/best_model.pth",
+    "metrics_path": "results/task3/final_train_metrics.json",
+    "run_name": "task3-moe-final",
+    "device": "cuda",
+    "num_workers": 2,
+    "seed": 42,
+    "smoke_test": false
+  }
+}

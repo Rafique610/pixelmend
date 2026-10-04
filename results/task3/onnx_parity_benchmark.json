@@ -1,0 +1,41 @@
+{
+  "model": "task3_soft_moe",
+  "onnx_path": "models\\onnx\\task3_soft_moe.onnx",
+  "onnx_size_mb": 57.76,
+  "opset_version": 17,
+  "temperature_tau": 2.5264,
+  "parity": {
+    "batch_1": {
+      "batch_size": 1,
+      "max_restored_abs_diff": 3.5762786865234375e-07,
+      "max_weights_abs_diff": 4.76837158203125e-07,
+      "restored_is_close": true,
+      "weights_is_close": true,
+      "passed": true
+    },
+    "batch_4": {
+      "batch_size": 4,
+      "max_restored_abs_diff": 4.76837158203125e-07,
+      "max_weights_abs_diff": 5.960464477539062e-07,
+      "restored_is_close": true,
+      "weights_is_close": true,
+      "passed": true
+    },
+    "batch_8": {
+      "batch_size": 8,
+      "max_restored_abs_diff": 3.5762786865234375e-07,
+      "max_weights_abs_diff": 4.172325134277344e-07,
+      "restored_is_close": true,
+      "weights_is_close": true,
+      "passed": true
+    },
+    "all_passed": true,
+    "tolerance_atol": 1e-05
+  },
+  "latency_cpu": {
+    "pytorch_ms": 138.99,
+    "onnxruntime_ms": 49.04,
+    "speedup": 2.83,
+    "throughput_fps": 20.4
+  }
+}

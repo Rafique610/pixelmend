@@ -230,7 +230,7 @@ def generate_optuna_plots(
 
 def execute_definitive_retrain(
     params_path: Union[str, Path] = "config/task3_best_params.json",
-    warmup_epochs: int = 10, joint_epochs: int = 40, seed: int = 42,
+    warmup_epochs: int = 3, joint_epochs: int = 8, seed: int = 42,
     device: Optional[torch.device] = None,
 ) -> Dict[str, Any]:
     with open(params_path, "r", encoding="utf-8") as f:
@@ -248,8 +248,8 @@ def execute_definitive_retrain(
         gate_lr=ft_lr, specialist_lr=ft_lr * 0.2, weight_decay=1e-4, tau=tau,
         lambda_l1=lambdas[0], lambda_ssim=lambdas[1], lambda_ce=lambdas[2], lambda_bal=lambdas[3],
         balance_variant="l2_deviation", save_path="checkpoints/task3/best_model.pth",
-        metrics_path="results/task3/baseline_train_metrics.json", device=str(dev),
-        num_workers=2, seed=seed, smoke_test=False,
+        metrics_path="results/task3/final_train_metrics.json", run_name="task3-moe-final",
+        device=str(dev), num_workers=2, seed=seed, smoke_test=False,
     )
     trained_model, summary = train_two_stage(load_moe(dev), train_loader, val_loader, args, dev)
     val_metrics = evaluate_per_corruption(trained_model, val_loader, dev, tau=tau)
@@ -290,8 +290,8 @@ def run_moe_optuna_study(
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Task 3 Soft MoE Optuna Study and Retrain")
     p.add_argument("--n-trials", type=int, default=25)
-    p.add_argument("--warmup-epochs", type=int, default=1)
-    p.add_argument("--joint-epochs", type=int, default=3)
+    p.add_argument("--warmup-epochs", type=int, default=3)
+    p.add_argument("--joint-epochs", type=int, default=8)
     p.add_argument("--retrain", action="store_true")
     p.add_argument("--seed", type=int, default=42)
     return p.parse_args()
@@ -299,6 +299,7 @@ def parse_args() -> argparse.Namespace:
 if __name__ == "__main__":
     a = parse_args()
     if a.retrain:
-        execute_definitive_retrain(seed=a.seed)
+        execute_definitive_retrain(warmup_epochs=a.warmup_epochs, joint_epochs=a.joint_epochs, seed=a.seed)
     else:
         run_moe_optuna_study(a.n_trials, a.warmup_epochs, a.joint_epochs, a.seed)
+

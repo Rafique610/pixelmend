@@ -1,0 +1,5 @@
+True Corruption,w_Clean,w_Salt,w_Blur,w_Occlusion
+Clean,0.5874,0.2307,0.0718,0.1101
+Salt & Pepper,0.5496,0.3983,0.0057,0.0464
+Gaussian Blur,0.5013,0.2276,0.1571,0.1140
+Occlusion,0.6782,0.1391,0.0289,0.1538

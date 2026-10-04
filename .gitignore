@@ -95,5 +95,6 @@ results/**/*.jpg
 results/**/*.jpeg
 !results/**/.gitkeep
 !results/.gitkeep
-# Quantitative JSON metrics are preserved in Git:
+# Quantitative JSON and CSV metrics are preserved in Git:
 !results/**/*.json
+!results/**/*.csv

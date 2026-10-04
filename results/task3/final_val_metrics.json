@@ -1,0 +1,70 @@
+{
+  "val_loss": 0.3351,
+  "val_psnr": 21.1,
+  "val_ssim": 0.6905,
+  "val_mae": 0.0613,
+  "val_accuracy": 0.3071,
+  "avg_routing_vector": [
+    0.5792,
+    0.2488,
+    0.0659,
+    0.1061
+  ],
+  "min_utilization": 0.0659,
+  "max_utilization": 0.5792,
+  "collapse_warning": false,
+  "per_corruption": {
+    "clean": {
+      "val_psnr": 25.81,
+      "val_ssim": 0.8959,
+      "val_mae": 0.0402,
+      "avg_routing_vector": [
+        0.5874,
+        0.2307,
+        0.0718,
+        0.1101
+      ]
+    },
+    "salt_and_pepper": {
+      "val_psnr": 19.95,
+      "val_ssim": 0.4386,
+      "val_mae": 0.0572,
+      "avg_routing_vector": [
+        0.5506,
+        0.3973,
+        0.0058,
+        0.0463
+      ]
+    },
+    "gaussian_blur": {
+      "val_psnr": 23.06,
+      "val_ssim": 0.7182,
+      "val_mae": 0.0543,
+      "avg_routing_vector": [
+        0.5013,
+        0.2276,
+        0.1571,
+        0.114
+      ]
+    },
+    "occlusion": {
+      "val_psnr": 15.58,
+      "val_ssim": 0.7105,
+      "val_mae": 0.0935,
+      "avg_routing_vector": [
+        0.6782,
+        0.1391,
+        0.0289,
+        0.1538
+      ]
+    }
+  },
+  "best_epoch": 4,
+  "hyperparameters": {
+    "fine_tune_lr": 1.7541893487450798e-05,
+    "temperature": 2.526366859545224,
+    "lambda_ce": 0.011439974749291277,
+    "lambda_balance": 0.06586289317583113,
+    "reconstruction_alpha": 0.6293899908000085
+  }
+}

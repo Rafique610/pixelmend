@@ -1,0 +1,5 @@
+Method,Overall PSNR (dB),Overall SSIM,Clean PSNR,Salt (Mild/Med/Sev),Blur (Mild/Med/Sev),Occ (Mild/Med/Sev),GPU Latency (ms)
+Task 1: Universal AE,20.08,0.5890,20.82,20.8 / 20.71 / 20.51,20.87 / 20.88 / 20.79,19.64 / 18.62 / 17.14,5.89 ms
+Task 2: Hard Router (Predicted),23.79,0.4958,77.54,18.53 / 18.53 / 18.51,17.85 / 17.78 / 17.75,17.69 / 17.13 / 16.54,1.78 ms
+Task 2: Hard Router (Oracle),24.00,0.4952,80.00,18.53 / 18.53 / 18.51,17.79 / 17.78 / 17.75,17.46 / 17.13 / 16.54,5.95 ms
+Task 3: Soft MoE (Ours),20.03,0.6495,25.89,22.03 / 19.46 / 18.2,23.96 / 22.3 / 21.34,17.8 / 15.46 / 13.85,18.17 ms
