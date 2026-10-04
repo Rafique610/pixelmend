@@ -1,0 +1,39 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: pixelmend-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - GENAI_HOST=0.0.0.0
+      - GENAI_PORT=8000
+      - GENAI_LOG_LEVEL=info
+      - GENAI_PREFER_CUDA=false
+      - GENAI_MODELS_DIR=/app/models/onnx
+    volumes:
+      - ./models/onnx:/app/models/onnx:ro
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: pixelmend-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+networks:
+  default:
+    name: pixelmend-network

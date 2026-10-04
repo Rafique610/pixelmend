@@ -1,0 +1,53 @@
+{
+  "platform": "Windows-10-10.0.26200-SP0",
+  "processor": "Intel64 Family 6 Model 186 Stepping 2, GenuineIntel",
+  "cpu_count": 12,
+  "onnxruntime": "1.30.0",
+  "provider": "CPUExecutionProvider",
+  "warmup_runs": 10,
+  "timed_runs": 50,
+  "models": {
+    "task1_universal_ae.onnx": {
+      "params": 4910659,
+      "size_mb": 18.75,
+      "latency_ms_mean": 28.38,
+      "latency_ms_p95": 33.11
+    },
+    "task2_classifier.onnx": {
+      "params": 389444,
+      "size_mb": 1.49,
+      "latency_ms_mean": 2.62,
+      "latency_ms_p95": 3.62
+    },
+    "task2_specialist_blur.onnx": {
+      "params": 4910659,
+      "size_mb": 18.75,
+      "latency_ms_mean": 27.77,
+      "latency_ms_p95": 32.16
+    },
+    "task2_specialist_occlusion.onnx": {
+      "params": 4910659,
+      "size_mb": 18.75,
+      "latency_ms_mean": 28.77,
+      "latency_ms_p95": 36.04
+    },
+    "task2_specialist_salt.onnx": {
+      "params": 4910659,
+      "size_mb": 18.75,
+      "latency_ms_mean": 31.16,
+      "latency_ms_p95": 60.45
+    },
+    "task3_soft_moe.onnx": {
+      "params": 15121421,
+      "size_mb": 57.76,
+      "latency_ms_mean": 80.87,
+      "latency_ms_p95": 92.1
+    },
+    "task4_generator.onnx": {
+      "params": 6830387,
+      "size_mb": 26.08,
+      "latency_ms_mean": 28.44,
+      "latency_ms_p95": 32.2
+    }
+  }
+}

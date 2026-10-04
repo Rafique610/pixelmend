@@ -1,0 +1,92 @@
+{
+  "timestamp": "2026-10-04 13:42:58",
+  "hardware": {
+    "device": "cuda",
+    "gpu_name": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+    "vram_gb": 6.0
+  },
+  "step1_architectures": {
+    "Vanilla U-Net (pix2pix)": {
+      "parameters": 6830387,
+      "params_millions": 6.83,
+      "gpu_latency_b1_ms": 3.68,
+      "gpu_latency_b8_ms": 14.55,
+      "gpu_peak_vram_mb": 160.56,
+      "cpu_latency_b1_ms": 37.754,
+      "val_l1_reconstruction": 0.2973,
+      "mean_grad_norm": 1.2914,
+      "style_diff_distance": 0.0657,
+      "onnx_exportable": true
+    },
+    "ResNet U-Net": {
+      "parameters": 16267571,
+      "params_millions": 16.27,
+      "gpu_latency_b1_ms": 4.993,
+      "gpu_latency_b8_ms": 18.35,
+      "gpu_peak_vram_mb": 206.68,
+      "cpu_latency_b1_ms": 56.391,
+      "val_l1_reconstruction": 0.3238,
+      "mean_grad_norm": 1.1472,
+      "style_diff_distance": 0.0427,
+      "onnx_exportable": true
+    },
+    "Attention U-Net": {
+      "parameters": 6917078,
+      "params_millions": 6.92,
+      "gpu_latency_b1_ms": 7.446,
+      "gpu_latency_b8_ms": 16.821,
+      "gpu_peak_vram_mb": 197.14,
+      "cpu_latency_b1_ms": 43.949,
+      "val_l1_reconstruction": 0.3135,
+      "mean_grad_norm": 1.3738,
+      "style_diff_distance": 0.0404,
+      "onnx_exportable": true
+    }
+  },
+  "step2_conditioning": {
+    "Spatial Concatenation": {
+      "parameters": 6567219,
+      "params_millions": 6.57,
+      "gpu_latency_b8_ms": 14.648,
+      "val_l1_reconstruction": 0.2564,
+      "style_diff_distance": 0.0234,
+      "mean_grad_norm": 1.1988,
+      "onnx_exportable": true
+    },
+    "FiLM (Feature Modulation)": {
+      "parameters": 6830387,
+      "params_millions": 6.83,
+      "gpu_latency_b8_ms": 14.8,
+      "val_l1_reconstruction": 0.2864,
+      "style_diff_distance": 0.1005,
+      "mean_grad_norm": 1.5685,
+      "onnx_exportable": true
+    },
+    "AdaIN (Adaptive Norm)": {
+      "parameters": 6830387,
+      "params_millions": 6.83,
+      "gpu_latency_b8_ms": 15.056,
+      "val_l1_reconstruction": 0.28,
+      "style_diff_distance": 0.0373,
+      "mean_grad_norm": 1.5574,
+      "onnx_exportable": true
+    }
+  },
+  "step2_embedding_dims": {
+    "d_s = 8": {
+      "val_l1": 0.2651,
+      "style_diff_distance": 0.0385,
+      "mean_grad_norm": 1.3531
+    },
+    "d_s = 16": {
+      "val_l1": 0.2672,
+      "style_diff_distance": 0.0736,
+      "mean_grad_norm": 1.3494
+    },
+    "d_s = 32": {
+      "val_l1": 0.3075,
+      "style_diff_distance": 0.0681,
+      "mean_grad_norm": 1.4478
+    }
+  }
+}

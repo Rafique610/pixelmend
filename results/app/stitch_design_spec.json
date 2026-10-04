@@ -1,0 +1,169 @@
+{
+  "system_name": "PixelMend Generative AI Studio",
+  "tool": "Google Stitch (stitch.withgoogle.com)",
+  "architecture_decision": {
+    "selected_pattern": "Option 1: Collapsible Persistent Sidebar Navigation",
+    "rationale": "Provides instant 1-click workspace switching between all 4 tasks without losing uploaded image context. Reserves dedicated persistent vertical space for global backend health indicators, active ONNX execution provider (CPU vs CUDA), and model memory footprint, while preserving >= 1100px of horizontal room for uncompromised side-by-side image comparison panels even on standard 1366x768 laptop displays.",
+    "comparison_summary": {
+      "Sidebar Navigation": {
+        "space_efficiency": "8/10",
+        "switching_speed": "10/10 (1 click)",
+        "image_comparison_room": "9/10",
+        "status_room": "10/10",
+        "recommendation": "Selected"
+      },
+      "Top Tab Navigation": {
+        "space_efficiency": "9/10",
+        "switching_speed": "10/10 (1 click)",
+        "image_comparison_room": "10/10",
+        "status_room": "6/10",
+        "recommendation": "Rejected - cramped metadata"
+      },
+      "Card Landing Hub": {
+        "space_efficiency": "7/10",
+        "switching_speed": "5/10 (multi-step)",
+        "image_comparison_room": "9/10",
+        "status_room": "8/10",
+        "recommendation": "Rejected - high interaction friction"
+      }
+    }
+  },
+  "design_tokens": {
+    "color_palette": {
+      "background_base": "#0F172A",
+      "card_surface": "#1E293B",
+      "card_surface_hover": "#334155",
+      "border": "#334155",
+      "text_primary": "#F8FAFC",
+      "text_secondary": "#94A3B8",
+      "text_muted": "#64748B",
+      "workspace_accents": {
+        "task1_universal": {
+          "primary": "#06B6D4",
+          "glow": "rgba(6, 182, 212, 0.25)",
+          "badge": "#083344"
+        },
+        "task2_hard_routed": {
+          "primary": "#F59E0B",
+          "glow": "rgba(245, 158, 11, 0.25)",
+          "badge": "#451A03"
+        },
+        "task3_soft_moe": {
+          "primary": "#8B5CF6",
+          "glow": "rgba(139, 92, 246, 0.25)",
+          "badge": "#2E1065"
+        },
+        "task4_face_to_sketch": {
+          "primary": "#EC4899",
+          "glow": "rgba(236, 72, 153, 0.25)",
+          "badge": "#500724"
+        }
+      },
+      "status_indicators": {
+        "healthy": "#10B981",
+        "busy": "#0EA5E9",
+        "error": "#EF4444"
+      }
+    },
+    "typography": {
+      "font_family_sans": "Inter, system-ui, -apple-system, sans-serif",
+      "font_family_mono": "JetBrains Mono, ui-monospace, monospace",
+      "headings": {
+        "h1": "text-2xl font-bold tracking-tight",
+        "h2": "text-lg font-semibold",
+        "h3": "text-sm font-medium uppercase tracking-wider"
+      }
+    },
+    "layout_dimensions": {
+      "sidebar_width": "260px",
+      "sidebar_collapsed_width": "72px",
+      "header_height": "64px",
+      "max_content_width": "1600px",
+      "image_display_size": "256px",
+      "border_radius": "12px"
+    }
+  },
+  "workspaces": {
+    "workspace_1": {
+      "title": "Universal Restoration",
+      "route": "/universal",
+      "endpoint": "POST /api/v1/restore/universal",
+      "model": "models/onnx/task1_universal_ae.onnx",
+      "components": [
+        "Sidebar",
+        "WorkspaceHeader",
+        "DualInputTabs",
+        "ImageUploader",
+        "SyntheticCorruptionStudio",
+        "SideBySideViewer",
+        "HeatmapViewer",
+        "LatencyBadge"
+      ],
+      "mockup_artifact": "results/app/stitch_universal_dashboard.jpg"
+    },
+    "workspace_2": {
+      "title": "Hard-Routed Restoration",
+      "route": "/hard-routed",
+      "endpoint": "POST /api/v1/restore/hard-routed",
+      "models": [
+        "task2_classifier.onnx",
+        "task2_specialist_blur.onnx",
+        "task2_specialist_salt.onnx",
+        "task2_specialist_occlusion.onnx"
+      ],
+      "components": [
+        "Sidebar",
+        "WorkspaceHeader",
+        "ImageUploader",
+        "ProbabilitiesBarChart",
+        "RoutingDecisionCard",
+        "SideBySideViewer",
+        "LatencyBreakdownChip"
+      ],
+      "mockup_artifact": "results/app/stitch_routing_workspaces.jpg"
+    },
+    "workspace_3": {
+      "title": "Soft Mixture-of-Experts Restoration",
+      "route": "/soft-moe",
+      "endpoint": "POST /api/v1/restore/soft-moe",
+      "model": "models/onnx/task3_soft_moe.onnx",
+      "components": [
+        "Sidebar",
+        "WorkspaceHeader",
+        "ImageUploader",
+        "GatingWeightGauges",
+        "DominantExpertCallout",
+        "SideBySideViewer",
+        "InferenceLatencyBadge"
+      ],
+      "mockup_artifact": "results/app/stitch_routing_workspaces.jpg"
+    },
+    "workspace_4": {
+      "title": "Face-to-Sketch Generator",
+      "route": "/face-to-sketch",
+      "endpoint": "POST /api/v1/sketch/generate",
+      "model": "models/onnx/task4_generator.onnx",
+      "components": [
+        "Sidebar",
+        "WorkspaceHeader",
+        "WebcamStreamViewfinder",
+        "SnapshotFreezeControl",
+        "PhotoUploaderTab",
+        "StyleCardSelector",
+        "SideBySideViewer",
+        "DownloadPngButton"
+      ],
+      "mockup_artifact": "results/app/stitch_face_sketch.jpg"
+    }
+  },
+  "stitch_project_url": "https://stitch.withgoogle.com/projects/13236968632410650096",
+  "stitch_export_evidence": {
+    "folder": "results/app/Google Stitch",
+    "files": [
+      "code.html",
+      "DESIGN.md",
+      "screen.png"
+    ],
+    "critique_and_refinement": "The raw Google Stitch generation proved overly verbose and crowded, featuring excessive mock telemetry pills (cluster VRAM, multi-GPU tags, DiT tags) and extraneous action buttons. For the actual React frontend implementation, we streamline the layout into a clean, modern, and uncluttered interface: focused side-by-side image comparison canvas, essential ML metric visualizers (routing probabilities, continuous gating weights, error heatmaps), and a clear persistent sidebar with genuine backend health monitoring."
+  }
+}

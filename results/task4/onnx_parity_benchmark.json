@@ -1,0 +1,28 @@
+{
+  "onnx_model_path": "models\\onnx\\task4_generator.onnx",
+  "file_size_bytes": 27342402,
+  "parity": {
+    "batch_1": {
+      "max_abs_diff": 3.6656856536865234e-06,
+      "mean_abs_diff": 3.0467828082691994e-07,
+      "passed": true
+    },
+    "batch_4": {
+      "max_abs_diff": 6.0498714447021484e-06,
+      "mean_abs_diff": 3.6246490253688535e-07,
+      "passed": true
+    },
+    "batch_8": {
+      "max_abs_diff": 6.973743438720703e-06,
+      "mean_abs_diff": 3.559480603598786e-07,
+      "passed": true
+    },
+    "all_passed": true
+  },
+  "latency": {
+    "pytorch_cpu_ms": 36.97,
+    "onnxruntime_cpu_ms": 18.13,
+    "speedup_ratio": 2.04,
+    "fps_ort": 55.2
+  }
+}

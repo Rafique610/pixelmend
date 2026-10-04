@@ -1,0 +1,46 @@
+# ==============================================================================
+# PixelMend Frontend Dockerfile (Two-Stage Alpine Production Build)
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Stage 1: Build Static Web Assets
+# ------------------------------------------------------------------------------
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Install pnpm package manager
+RUN npm install -g pnpm
+
+# Copy package manifests first to leverage Docker layer caching
+COPY src/app/frontend/package.json src/app/frontend/pnpm-lock.yaml* src/app/frontend/.npmrc* src/app/frontend/pnpm-workspace.yaml* ./
+
+# Install exact locked dependencies
+RUN pnpm install --frozen-lockfile || pnpm install
+
+# Copy application source tree and configurations
+COPY src/app/frontend/ ./
+
+# Compile TypeScript and bundle production assets with Vite
+RUN pnpm build
+
+# ------------------------------------------------------------------------------
+# Stage 2: Nginx Web Server & Reverse Proxy
+# ------------------------------------------------------------------------------
+FROM nginx:alpine AS runtime
+
+# Remove default static landing files
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copy compiled frontend assets from builder stage
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Mount custom Nginx reverse proxy routing configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+HEALTHCHECK --interval=10s --timeout=3s --retries=3 \
+    CMD wget -qO- http://127.0.0.1:80/ || exit 1
+
+CMD ["nginx", "-g", "daemon off;"]

@@ -21,7 +21,7 @@ data/*
 checkpoints/*
 !checkpoints/.gitkeep
 !checkpoints/**/README.md
-models/**/*.onnx
+# ONNX models (<100MB each) are committed so evaluators can run without training
 !models/**/.gitkeep
 
 # --- Optuna Studies Database ---

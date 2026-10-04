@@ -1,0 +1,14 @@
+{
+  "study_name": "task4-cgan",
+  "n_trials": 11,
+  "best_trial_number": 10,
+  "best_val_l1": 0.11191241768230299,
+  "best_params": {
+    "g_lr": 0.00022298421461301778,
+    "d_lr": 0.00022262044174022568,
+    "lambda_l1": 130.79454689861973,
+    "dropout": 0.0014683191321356523,
+    "base_channels": 64
+  },
+  "search_duration_sec": 490.01516556739807
+}

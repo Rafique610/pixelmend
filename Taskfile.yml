@@ -222,6 +222,16 @@ tasks:
   # ---------------------------------------------------------------------------
   # Docker
   # ---------------------------------------------------------------------------
+  smoke:
+    desc: "Live smoke test against a running API (task smoke -- --base-url http://localhost)"
+    cmds:
+      - "{{.PYTHON}} scripts/smoke_test.py {{.CLI_ARGS}}"
+
+  benchmark-cpu:
+    desc: "Benchmark all ONNX models on CPU -> results/app/cpu_benchmark.json"
+    cmds:
+      - "{{.PYTHON}} scripts/benchmark_cpu.py"
+
   docker-up:
     desc: "Start full application with Docker Compose (one command)"
     cmds:

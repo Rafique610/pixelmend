@@ -1,0 +1,49 @@
+{
+  "timestamp": "2026-10-04 13:49:12",
+  "hardware": {
+    "device": "cuda",
+    "gpu_name": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+    "vram_gb": 6.0
+  },
+  "candidates": {
+    "70x70 PatchGAN (pix2pix default)": {
+      "parameters": 2783345,
+      "params_millions": 2.78,
+      "mean_latency_ms": 39.33,
+      "p95_latency_ms": 41.656,
+      "peak_vram_mb": 377.52,
+      "d_real_loss": 0.0338,
+      "d_fake_loss": 0.0261,
+      "d_total_loss": 0.03,
+      "generator_grad_norm": 17.6281,
+      "output_grid": "14x14",
+      "receptive_field": "~70x70"
+    },
+    "16x16 PatchGAN (shallower RF)": {
+      "parameters": 155761,
+      "params_millions": 0.16,
+      "mean_latency_ms": 38.872,
+      "p95_latency_ms": 49.618,
+      "peak_vram_mb": 358.05,
+      "d_real_loss": 0.3842,
+      "d_fake_loss": 0.4109,
+      "d_total_loss": 0.3975,
+      "generator_grad_norm": 2.3953,
+      "output_grid": "31x31",
+      "receptive_field": "~16x16"
+    },
+    "Multi-Scale PatchGAN (pix2pixHD)": {
+      "parameters": 2960578,
+      "params_millions": 2.96,
+      "mean_latency_ms": 45.998,
+      "p95_latency_ms": 62.115,
+      "peak_vram_mb": 391.55,
+      "d_real_loss": 0.0962,
+      "d_fake_loss": 0.0893,
+      "d_total_loss": 0.0927,
+      "generator_grad_norm": 11.1949,
+      "output_grid": "14x14 + 7x7",
+      "receptive_field": "Dual (70x70 + coarse)"
+    }
+  }
+}

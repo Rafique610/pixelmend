@@ -1,0 +1,14 @@
+{
+  "val_l1": 0.0976,
+  "val_psnr": 15.8767,
+  "val_ssim": 0.4809,
+  "style_0_l1": 0.0718,
+  "style_0_psnr": 17.4648,
+  "style_0_ssim": 0.5118,
+  "style_1_l1": 0.1303,
+  "style_1_psnr": 13.521,
+  "style_1_ssim": 0.4077,
+  "style_2_l1": 0.0911,
+  "style_2_psnr": 16.6138,
+  "style_2_ssim": 0.5225
+}

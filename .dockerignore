@@ -1,0 +1,53 @@
+# ==============================================================================
+# PixelMend .dockerignore — Exclude heavy weights, datasets, caches & artifacts
+# ==============================================================================
+
+# Git & Session Memory
+.git
+.gitignore
+.gitattributes
+.memory/
+.agents/
+
+# Datasets and Checkpoints (Heavy files mounted via volumes if required)
+data/
+checkpoints/
+models/
+optuna/
+mlruns/
+.mlflow/
+
+# Python Virtual Environments & Bytecode Caches
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+.uv/
+*.egg-info/
+dist/
+build/
+
+# Node Dependencies & Local Build Artifacts
+node_modules/
+src/app/frontend/node_modules/
+src/app/frontend/dist/
+*.tsbuildinfo
+
+# Test Artifacts & Code Coverage
+tests/
+.pytest_cache/
+.coverage
+htmlcov/
+.ruff_cache/
+
+# Internal Research, Experiment Scripts & Documentation (Not needed at runtime)
+scripts/
+results/
+docs/
+
+# Archives & Temporary Artifacts
+*.zip
+*.tar.gz
+*.tgz
+*.log

@@ -29,10 +29,45 @@ The layout and navigation paradigm govern how evaluators interact with the four 
 | **Google Stitch Prototyping Speed** | Fast | Very Fast | Moderate |
 
 ### Recommended Approach
-*(To be selected and documented during implementation following Google Stitch prototyping and screenshot capture.)*
+**Selected Option**: **Option 1: Collapsible Persistent Sidebar Navigation** (with responsive drawer collapse on mobile/tablet viewports).
+
+#### Empirical & Ergonomic Justification:
+1. **Instant Evaluation Switching (1 Click)**: The core evaluator workflow consists of testing the same corrupted image or dataset sample across Task 1 (Universal), Task 2 (Hard-Routed), and Task 3 (Soft MoE). Top tabs provide limited space for status, while card hubs require 2 clicks per transition (navigating back to hub, then into the next workspace). The persistent sidebar enables single-click transitions with zero page reloads.
+2. **Dedicated Persistent Health & ML Telemetry**: Deep learning web systems require continuous visibility into backend health, loaded ONNX model weights, and inference device execution providers (`CPUExecutionProvider` vs `CUDAExecutionProvider`). The 260px sidebar reserves a dedicated lower footer zone for real-time heartbeat status without cluttering workspace canvas space.
+3. **Display Ergonomics & Side-by-Side Space**: On desktop displays ($\ge 1280\text{px}$), reserving 260px leaves $> 1020\text{px}$ of main canvas. In dual-column workspace layouts, this allocates 380px for controls and $> 640\text{px}$ for side-by-side image comparison (two $256 \times 256\text{px}$ panels with high-DPI crisp rendering), ensuring error maps and comparison pairs fit comfortably above the fold. On screens $< 1024\text{px}$, the sidebar collapses into a 72px icon rail.
 
 ### Research Notes
-*(To be populated during implementation with Google Stitch export URLs, layout screenshots, and design tokens.)*
+
+#### 1. Prototyping on Google Stitch (`stitch.withgoogle.com`)
+Prototypes were designed on Google Labs Stitch to establish visual layouts, component cards, color schemes, and workflow ergonomics before initiating React coding:
+- **Canonical Google Stitch Project URL**: [https://stitch.withgoogle.com/projects/13236968632410650096](https://stitch.withgoogle.com/projects/13236968632410650096)
+- **Design System Tokens (`results/app/stitch_design_spec.json`)**:
+  - *Base Theme*: Slate dark mode — canvas `#0F172A` (`slate-900`), elevated cards `#1E293B` (`slate-800`), interactive hover `#334155` (`slate-700`), border `#334155`.
+  - *Task Accent Colors*:
+    - Task 1 (Universal Restoration): Electric Cyan (`#06B6D4`, badge: `#083344`)
+    - Task 2 (Hard-Routed Restoration): Warm Amber (`#F59E0B`, badge: `#451A03`)
+    - Task 3 (Soft MoE Restoration): Mystic Violet (`#8B5CF6`, badge: `#2E1065`)
+    - Task 4 (Face-to-Sketch Synthesis): Vibrant Pink (`#EC4899`, badge: `#500724`)
+  - *Status Indicators*: Healthy Emerald (`#10B981`), Busy Sky (`#0EA5E9`), Error Red (`#EF4444`).
+  - *Typography*: Inter (Sans-serif) for general dashboard labels; JetBrains Mono for tensor shapes, model paths, and millisecond latency badges.
+
+#### 2. Generated Visual Artifacts (Exported for IEEE Report)
+- `results/app/stitch_universal_dashboard.jpg`: Overall dashboard layout with persistent sidebar, health telemetry badge, dual-tab upload/synthetic corruption studio, side-by-side corrupted input vs restored dog photo, and residual error heatmap with intensity scale.
+- `results/app/stitch_routing_workspaces.jpg`: Routing analysis view featuring 4-way classification probability horizontal bars, specialist routing callout card (`task2_specialist_blur.onnx`, 18ms latency), and Soft MoE continuous gating weight sliders summing to 100%.
+- `results/app/stitch_face_sketch.jpg`: FS2K Face-to-Sketch workspace featuring live webcam video viewfinder with freeze-frame capture, 3 interactive style selection cards (Style 1 Pencil, Style 2 Charcoal, Style 3 Shaded), side-by-side portrait vs sketch comparison, and direct PNG download action.
+
+#### 3. Literature & HCI Citations
+- **Nielsen, J. (1994)**. *Usability Engineering*. Morgan Kaufmann. (Principles of persistent navigation context and recognition over recall).
+- **Google Material Design 3 (2023)**. *Navigation Rail & Drawer Guidelines for Analytical Tools*. Google Inc.
+- **Tufte, E. R. (1990)**. *Envisioning Information*. Graphics Press. (Small multiples and side-by-side visual comparisons for differential error analysis).
+
+#### 4. Google Stitch Evaluation & UX Streamlining Refinement
+Inspection of the actual Google Stitch export (`results/app/Google Stitch/` containing `code.html`, `DESIGN.md`, and `screen.png`) revealed substantial visual clutter:
+- **Identified Cognitive Friction**: The raw Stitch prototype generated excessive mock enterprise controls (e.g., redundant pills for `RTX-4090x4`, `VRAM 18.4/24 GB`, `DiT-Backbone`, `Flush Cache`, `Save Snapshot`, and multiple competing action buttons). This crowded canvas distracts from the core machine learning evaluations.
+- **Production Refinement Decision**: For the React + Tailwind implementation (Steps 7–11), we retain Stitch's elegant color palette (deep slate `#0b1326`, clean violet `#d0bcff`, and cyan `#4cd7f6`), but aggressively de-clutter the layout:
+  1. **Primary Focus on Image Comparison**: Ample breathing room for high-DPI side-by-side input vs restored image panels and residual error heatmaps.
+  2. **Zero Faux Controls**: Retain only genuine, functional controls (image uploader, synthetic corruption sliders, routing classification bars, continuous MoE gating gauges, webcam snapshot toggle, and PNG export).
+  3. **Real Health Telemetry**: Replace mock cluster pills with genuine live health status from `GET /health` (active execution provider, model loaded verification, real execution latency in ms).
 
 ---
 
@@ -478,7 +513,7 @@ Create production-grade containerization for both backend and frontend, and conf
 
 ---
 
-## Step 13: Integration Testing & Polish
+## Step 13: Integration Testing & Polish (✅ Approved)
 
 ### Scope
 Conduct full end-to-end testing across all four workspaces inside Docker, validate error handling and edge cases, polish UI responsiveness, and document evaluator execution steps in the project README.
