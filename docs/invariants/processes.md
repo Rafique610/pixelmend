@@ -21,6 +21,7 @@
 6. Wait for explicit approval.
 7. Mark step `✅` once approved.
 8. Log in `.memory/tasks.md`.
+9. **Runtime Ceiling:** Never let any single training, sweep, benchmark, or evaluation execution exceed 15 minutes. Size epochs, batches, and trials accordingly.
 
 ## Commits
 

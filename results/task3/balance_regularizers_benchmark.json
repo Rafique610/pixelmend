@@ -1,0 +1,47 @@
+{
+  "l2_deviation": {
+    "name": "L2 Deviation",
+    "val_psnr": 32.27,
+    "val_ssim": 0.6252,
+    "val_l1": 0.0656,
+    "avg_routing_vector": [
+      0.3156,
+      0.2501,
+      0.1873,
+      0.247
+    ],
+    "min_utilization": 0.1873,
+    "max_utilization": 0.3156,
+    "collapse_detected": false
+  },
+  "entropy": {
+    "name": "Entropy Maximization",
+    "val_psnr": 32.26,
+    "val_ssim": 0.6247,
+    "val_l1": 0.0657,
+    "avg_routing_vector": [
+      0.3144,
+      0.2501,
+      0.1885,
+      0.247
+    ],
+    "min_utilization": 0.1885,
+    "max_utilization": 0.3144,
+    "collapse_detected": false
+  },
+  "switch": {
+    "name": "Switch Load Balance",
+    "val_psnr": 32.28,
+    "val_ssim": 0.6252,
+    "val_l1": 0.0656,
+    "avg_routing_vector": [
+      0.3156,
+      0.2501,
+      0.1874,
+      0.2469
+    ],
+    "min_utilization": 0.1874,
+    "max_utilization": 0.3156,
+    "collapse_detected": false
+  }
+}

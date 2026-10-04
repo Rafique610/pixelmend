@@ -134,9 +134,10 @@ def train_classifier(
     best_metrics: Dict[str, Any] = {}
     best_cm: np.ndarray = np.zeros((4, 4))
     ckpt_dir = Path("checkpoints/task2")
-    ckpt_dir.mkdir(parents=True, exist_ok=True)
-    best_ckpt_path = ckpt_dir / "classifier_best.pt"
-    latest_ckpt_path = ckpt_dir / "classifier_latest.pt"
+    best_ckpt_name = "classifier_best.pt" if run_name in ("baseline", "final") else f"{run_name}_best.pt"
+    latest_ckpt_name = "classifier_latest.pt" if run_name in ("baseline", "final") else f"{run_name}_latest.pt"
+    best_ckpt_path = ckpt_dir / best_ckpt_name
+    latest_ckpt_path = ckpt_dir / latest_ckpt_name
 
     start_time = time.time()
     for epoch in range(1, epochs + 1):

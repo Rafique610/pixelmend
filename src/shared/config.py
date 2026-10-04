@@ -117,4 +117,9 @@ class Settings(BaseSettings):
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
     """Return the cached Settings singleton. Import this everywhere."""
-    return Settings()
+    settings = Settings()
+    if torch.cuda.is_available():
+        # Enable TensorFloat-32 (TF32) on Ampere+ GPUs (e.g. RTX 3050)
+        torch.backends.cuda.matmul.allow_tf32 = True
+        torch.backends.cudnn.allow_tf32 = True
+    return settings

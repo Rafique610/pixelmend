@@ -1,0 +1,139 @@
+{
+  "models": {
+    "classifier": {
+      "checkpoint": "checkpoints/task2/classifier_best.pt",
+      "onnx_path": "models\\onnx\\task2_classifier.onnx",
+      "file_size_mb": 1.49,
+      "parity": {
+        "batch_1": {
+          "batch_size": 1,
+          "max_abs_diff": 2.86102294921875e-06,
+          "mean_abs_diff": 1.6093254089355469e-06,
+          "is_close": true
+        },
+        "batch_4": {
+          "batch_size": 4,
+          "max_abs_diff": 4.76837158203125e-06,
+          "mean_abs_diff": 1.5497207641601562e-06,
+          "is_close": true
+        },
+        "batch_8": {
+          "batch_size": 8,
+          "max_abs_diff": 9.059906005859375e-06,
+          "mean_abs_diff": 1.7955899238586426e-06,
+          "is_close": true
+        },
+        "all_passed": true,
+        "tolerance_atol": 1e-05
+      },
+      "latency": {
+        "pytorch_ms": 6.43,
+        "onnxruntime_ms": 1.45,
+        "speedup": 4.43,
+        "throughput_fps": 688.8
+      }
+    },
+    "specialist_salt": {
+      "checkpoint": "checkpoints/task2/specialist_salt_best.pt",
+      "onnx_path": "models\\onnx\\task2_specialist_salt.onnx",
+      "file_size_mb": 18.75,
+      "parity": {
+        "batch_1": {
+          "batch_size": 1,
+          "max_abs_diff": 2.384185791015625e-07,
+          "mean_abs_diff": 4.0896946273960566e-08,
+          "is_close": true
+        },
+        "batch_4": {
+          "batch_size": 4,
+          "max_abs_diff": 2.384185791015625e-07,
+          "mean_abs_diff": 4.1757630242500454e-08,
+          "is_close": true
+        },
+        "batch_8": {
+          "batch_size": 8,
+          "max_abs_diff": 2.980232238769531e-07,
+          "mean_abs_diff": 4.2600504457368515e-08,
+          "is_close": true
+        },
+        "all_passed": true,
+        "tolerance_atol": 1e-05
+      },
+      "latency": {
+        "pytorch_ms": 41.67,
+        "onnxruntime_ms": 17.07,
+        "speedup": 2.44,
+        "throughput_fps": 58.6
+      }
+    },
+    "specialist_blur": {
+      "checkpoint": "checkpoints/task2/specialist_blur_best.pt",
+      "onnx_path": "models\\onnx\\task2_specialist_blur.onnx",
+      "file_size_mb": 18.75,
+      "parity": {
+        "batch_1": {
+          "batch_size": 1,
+          "max_abs_diff": 2.384185791015625e-07,
+          "mean_abs_diff": 3.846616891678423e-08,
+          "is_close": true
+        },
+        "batch_4": {
+          "batch_size": 4,
+          "max_abs_diff": 2.682209014892578e-07,
+          "mean_abs_diff": 3.7591991741692254e-08,
+          "is_close": true
+        },
+        "batch_8": {
+          "batch_size": 8,
+          "max_abs_diff": 2.682209014892578e-07,
+          "mean_abs_diff": 3.696815653597696e-08,
+          "is_close": true
+        },
+        "all_passed": true,
+        "tolerance_atol": 1e-05
+      },
+      "latency": {
+        "pytorch_ms": 38.88,
+        "onnxruntime_ms": 17.59,
+        "speedup": 2.21,
+        "throughput_fps": 56.9
+      }
+    },
+    "specialist_occlusion": {
+      "checkpoint": "checkpoints/task2/specialist_occlusion_best.pt",
+      "onnx_path": "models\\onnx\\task2_specialist_occlusion.onnx",
+      "file_size_mb": 18.75,
+      "parity": {
+        "batch_1": {
+          "batch_size": 1,
+          "max_abs_diff": 5.662441253662109e-07,
+          "mean_abs_diff": 1.0290720098282691e-07,
+          "is_close": true
+        },
+        "batch_4": {
+          "batch_size": 4,
+          "max_abs_diff": 6.258487701416016e-07,
+          "mean_abs_diff": 1.0418981588600218e-07,
+          "is_close": true
+        },
+        "batch_8": {
+          "batch_size": 8,
+          "max_abs_diff": 7.748603820800781e-07,
+          "mean_abs_diff": 1.0291682883689646e-07,
+          "is_close": true
+        },
+        "all_passed": true,
+        "tolerance_atol": 1e-05
+      },
+      "latency": {
+        "pytorch_ms": 42.39,
+        "onnxruntime_ms": 17.56,
+        "speedup": 2.41,
+        "throughput_fps": 56.9
+      }
+    }
+  },
+  "all_passed": true,
+  "onnx_router_pipeline_latency_ms": 13.16,
+  "onnx_router_throughput_fps": 76.0
+}

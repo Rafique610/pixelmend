@@ -46,10 +46,17 @@ The gating network $G(\tilde{x})$ maps the input image to a 4-dimensional routin
 | **Inference Overhead** | Minimal ($< 0.5\text{ ms}$). | Low ($< 1.0\text{ ms}$). | Moderate ($3\text{--}5\text{ ms}$). |
 
 ### Recommended Approach
-*To be filled during implementation based on Task 2 classifier backbone compatibility and empirical routing stability.*
+**Adopt Option 1 (Linear Gate) with direct 1:1 weight transfer from `checkpoints/task2/classifier_best.pt`**:
+1. **Direct 1:1 Parameter Transfer**: The Task 2 corruption classifier (`CustomConvClassifier`) features a 4-stage convolutional backbone $(32, 64, 128, 256)$ followed by GAP and a single `Linear(256, 4)` head (389,924 total parameters). Using the Linear Gate architecture allows exact 1:1 weight transplantation of both the feature extractor and the classification projection without modifying tensor shapes or introducing uninitialized layers.
+2. **Zero-Shot Alignment & Warm-up Stability**: Initializing both the backbone and the linear head preserves the 76.56%+ classification calibration achieved in Task 2. Phase 1 warm-up begins with already-meaningful routing distributions, eliminating the random routing perturbations that occur when uninitialized MLP or Attention projections are introduced.
+3. **Inference Latency & Deployment Simplicity**: Measures 7.03 ms single-image CPU latency and maps cleanly to standard ONNX Gemm/Softmax operations without custom attention operator overhead.
 
 ### Research Notes
-*(Empty section — to be populated with experimental observations during implementation).*
+- **Empirical Parameter & Latency Measurements**:
+  - Linear Gate: 389,924 parameters | 1.49 MB | 7.03 ms CPU latency ($B=1$).
+  - MLP Gate ($256 \to 128 \to 4$): 422,308 parameters | 1.61 MB | 6.13 ms CPU latency ($B=1$).
+  - Attention Gate (SE block $256 \to 64 \to 256$): 423,012 parameters | 1.61 MB | 6.59 ms CPU latency ($B=1$).
+- **Routing Dynamics**: Linear decision boundaries in the 256-dimensional pooled feature space are fully sufficient to partition the distinct corruption distributions (impulse noise, low-pass blur, spatial occlusion). Temperature scaling $\tau$ smoothly controls entropy without requiring non-linear intermediate activations.
 
 ---
 
@@ -153,16 +160,26 @@ Execute 10-epoch runs with identical seed (`42`), identical initial learning rat
 #### Comparison Results
 
 | Regularizer Variant | Val PSNR (dB) | Val SSIM | Val L1 Loss | Avg Routing Vector $[\bar{w}_1, \bar{w}_2, \bar{w}_3, \bar{w}_4]$ | Collapse Detected? |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **L2 Deviation** | *TBD* | *TBD* | *TBD* | *TBD* | *TBD* |
-| **Entropy Maximization** | *TBD* | *TBD* | *TBD* | *TBD* | *TBD* |
-| **Switch Load Balance** | *TBD* | *TBD* | *TBD* | *TBD* | *TBD* |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **L2 Deviation** | **32.27 dB** | **0.6252** | **0.0656** | $[0.3156, 0.2501, 0.1873, 0.2470]$ | **No** (min: 18.73%, max: 31.56%) |
+| **Entropy Maximization** | 32.26 dB | 0.6247 | 0.0657 | $[0.3144, 0.2501, 0.1885, 0.2470]$ | **No** (min: 18.85%, max: 31.44%) |
+| **Switch Load Balance** | **32.28 dB** | **0.6252** | **0.0656** | $[0.3156, 0.2501, 0.1874, 0.2469]$ | **No** (min: 18.74%, max: 31.56%) |
+
+*Benchmark data generated via `scripts/verify_task3_balance_regularizers.py` on CUDA (RTX 3050 6GB) and persisted to `results/task3/balance_regularizers_benchmark.json`.*
 
 ### Recommended Approach
-*To be filled during implementation based on side-by-side empirical results.*
+**Adopt Option 1 (L2 Deviation from Uniformity) as canonical baseline regularizer, with Option 3 (Switch Load Balance) tuned in Optuna**:
+1. **Empirical Balance & Collapse Prevention**: All three candidate regularizers prevented expert starvation, keeping every branch between 18.7% and 31.6% average validation utilization—well above the 5% minimum threshold and 2% collapse boundary.
+2. **Assignment Specification Alignment**: L2 deviation $\mathcal{L}_{\text{balance}} = \sum_{k=1}^4 (\bar{w}_k - 0.25)^2$ is directly specified in the assignment prompt, possesses intuitive quadratic penalty dynamics, and matches the top restoration metrics (32.27 dB PSNR, 0.6252 SSIM, 0.0656 L1).
+3. **Switch Transformer as Robust Alternative**: The Switch Transformer balancing formulation ($4 \sum f_k \bar{w}_k$) produces 8.6× steeper gradient norm ($0.129$ vs $0.015$) when starvation begins, making it a powerful regularization alternative during higher learning-rate fine-tuning regimes.
 
 ### Research Notes
-*(Empty section — to be populated with experimental observations during implementation).*
+- **Gradient Norm Dynamics**:
+  - In unit gradient backward profiling with initial weights, the gradient norm on routing logits was measured at:
+    - L2 Deviation: $\|g\|_2 = 0.0154$
+    - Entropy Maximization: $\|g\|_2 = 0.0353$
+    - Switch Transformer: $\|g\|_2 = 0.1293$
+- **Loss Contribution**: With $\lambda_4 = 0.01$, the balance loss remains between $0.0001$ and $0.0118$, providing smooth corrective pressure without overpowering the primary reconstruction objective $\mathcal{L}_{\text{rec}}$ ($0.8 \mathcal{L}_1 + 0.2 (1-\text{SSIM}) \approx 0.127$).
 
 ---
 
@@ -224,15 +241,32 @@ At the end of each validation epoch within a trial:
 2. If $\max_{k \in \{1,2,3,4\}} \bar{w}_k > 0.90$ or $\min_{k \in \{1,2,3,4\}} \bar{w}_k < 0.02$:
    - Trigger immediate pruning: `raise optuna.TrialPruned("Routing collapse detected: expert dominance > 90% or starvation < 2%")`.
 
-### Verification
-- Optuna database successfully records all trial parameters, intermediate epoch reports, and pruning events.
-- Best trial parameters exported to `config/task3_best_params.json`.
-- Visualizations generated: optimization history plot, hyperparameter slice plot, and parameter importances plot.
+### Verification & Empirical Findings
+- **Optuna Execution**: 26 trials executed on RTX 3050 (`task3-moe-joint` in `optuna/optuna_studies.db`). 13 trials completed full schedules; 12 trials were pruned via MedianPruner and the routing collapse heuristic (dominance $>90\%$ or starvation $<2\%$), effectively saving compute.
+- **Best Validation SSIM**: **0.7261** (Trial 8), improving over the baseline Step 5 SSIM of 0.7096 (+0.0165 SSIM gain).
+- **Optimal Hyperparameters Discovered**:
+  | Hyperparameter | Optimal Value | Interpretation |
+  | :--- | :--- | :--- |
+  | `fine_tune_lr` | $1.754 \times 10^{-5}$ | Conservative fine-tuning rate prevents catastrophic forgetting of specialist denoisers. |
+  | `temperature` ($\tau$) | $2.526$ | Moderate temperature yields well-calibrated soft ensemble blending without hard saturation. |
+  | `lambda_ce` ($\lambda_3$) | $0.0114$ | Provides gentle auxiliary supervision to gate without overpowering visual reconstruction. |
+  | `lambda_balance` ($\lambda_4$) | $0.0659$ | Stronger balance penalty than baseline ($0.01$) ensures uniform expert utilization across batches. |
+  | `reconstruction_alpha` ($\alpha$) | $0.6294$ | Weights: $\lambda_{\text{L1}} = 0.6294$, $\lambda_{\text{SSIM}} = 0.3706$, balancing structural fidelity and pixel loss. |
+- **Artifacts Saved**:
+  - `config/task3_best_params.json` (canonical JSON configuration for Step 7 retrain).
+  - `results/task3/figures/optuna_moe_history.png`
+  - `results/task3/figures/optuna_moe_param_importances.png`
+  - `results/task3/figures/optuna_moe_slice.png`
 
 ### Files Changed
 - `src/task3/optuna_search.py`
 - `optuna/optuna_studies.db`
 - `config/task3_best_params.json`
+- `results/task3/figures/optuna_moe_history.png`
+- `results/task3/figures/optuna_moe_param_importances.png`
+- `results/task3/figures/optuna_moe_slice.png`
+- `tests/test_task3_optuna.py`
+
 
 ---
 
@@ -371,7 +405,7 @@ Export the complete end-to-end Soft MoE pipeline to a unified ONNX model for hig
   ```
 
 ### Verification Procedure
-1. Export model via `torch.onnx.export()` to `models/onnx/task3_soft_moe.onnx`.
+1. Export model via `torch.onnx.export()` to `models/onnx/task3_soft_moe.onnx`. Use `ExportWrapper` to fix $\tau$ and ensure the exported graph accepts strictly `input_image` as its single tensor input (preventing PyTorch tracing from treating keyword arguments as extraneous graph inputs).
 2. Validate ONNX structural integrity using `onnx.checker.check_model()`.
 3. Execute identical validation batch ($B=8$) through both PyTorch eager mode and ONNX Runtime (`CPUExecutionProvider` / `CUDAExecutionProvider`).
 4. Validate numerical equivalence:
@@ -379,6 +413,15 @@ Export the complete end-to-end Soft MoE pipeline to a unified ONNX model for hig
    $$\max |w_{\text{PyTorch}} - w_{\text{ORT}}| < 1 \times 10^{-5}$$
    Assert `np.allclose(pytorch_out, ort_out, atol=1e-5)`.
 5. Benchmark inference latency across 100 iterations and log speedup metrics for the app workspace (`Soft Mixture-of-Experts Restoration`).
+
+### Empirical Benchmark & Verification Results
+- **Numerical Parity**: Verified empirically on Task 2 checkpoints:
+  - $\max |\hat{x}_{\text{PyTorch}} - \hat{x}_{\text{ORT}}| = \mathbf{1.192 \times 10^{-7}}$ (tolerance: $1 \times 10^{-5}$)
+  - $\max |w_{\text{PyTorch}} - w_{\text{ORT}}| = \mathbf{1.192 \times 10^{-7}}$ (tolerance: $1 \times 10^{-5}$)
+- **Inference Latency (Single Image CPU)**:
+  - PyTorch CPU: **114.80 ms**
+  - ONNX Runtime CPU: **58.93 ms**
+  - Speedup Factor: **1.95× acceleration**
 
 ### Files Changed
 - `src/task3/export_onnx.py`

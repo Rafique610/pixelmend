@@ -97,3 +97,107 @@ def plot_classifier_metrics(
     plt.close(fig)
 
     return curves_path, cm_path
+
+
+def plot_specialists_curves(
+    histories: Dict[str, Dict[str, List[float]]],
+    save_path: Path,
+) -> Path:
+    """Generate multi-panel comparison curves showing Loss, PSNR, and SSIM across all 3 specialists."""
+    save_path.parent.mkdir(parents=True, exist_ok=True)
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(15, 4.5))
+
+    colors = {
+        "salt_and_pepper": "#2b5c8f",
+        "gaussian_blur": "#d95f02",
+        "occlusion": "#1b9e77",
+    }
+    labels = {
+        "salt_and_pepper": "Salt & Pepper",
+        "gaussian_blur": "Gaussian Blur",
+        "occlusion": "Occlusion",
+    }
+
+    for corr, hist in histories.items():
+        epochs = range(1, len(hist["val_loss"]) + 1)
+        c = colors.get(corr, "#333333")
+        lbl = labels.get(corr, corr)
+
+        ax1.plot(epochs, hist["val_loss"], marker="o", label=lbl, color=c, lw=2)
+        ax2.plot(epochs, hist["val_psnr"], marker="s", label=lbl, color=c, lw=2)
+        ax3.plot(epochs, hist["val_ssim"], marker="^", label=lbl, color=c, lw=2)
+
+    ax1.set_title("Validation Loss Progression", fontweight="bold")
+    ax1.set_xlabel("Epoch")
+    ax1.set_ylabel("Loss (Combined L1 + SSIM)")
+    ax1.legend()
+    ax1.grid(True, alpha=0.3)
+
+    ax2.set_title("Validation PSNR (dB)", fontweight="bold")
+    ax2.set_xlabel("Epoch")
+    ax2.set_ylabel("PSNR (dB)")
+    ax2.legend()
+    ax2.grid(True, alpha=0.3)
+
+    ax3.set_title("Validation SSIM", fontweight="bold")
+    ax3.set_xlabel("Epoch")
+    ax3.set_ylabel("SSIM")
+    ax3.legend()
+    ax3.grid(True, alpha=0.3)
+
+    fig.tight_layout()
+    fig.savefig(save_path, dpi=150)
+    plt.close(fig)
+    return save_path
+
+
+def plot_specialists_reconstructions(
+    samples: Dict[str, Tuple[torch.Tensor, torch.Tensor, torch.Tensor]],
+    save_path: Path,
+) -> Path:
+    """Generate visual triplet inspection grid (Corrupted, Restored, Ground Truth) per specialist."""
+    save_path.parent.mkdir(parents=True, exist_ok=True)
+    num_specialists = len(samples)
+    fig, axes = plt.subplots(num_specialists, 3, figsize=(9, 3 * num_specialists))
+    if num_specialists == 1:
+        axes = np.expand_dims(axes, 0)
+
+    col_titles = ["Corrupted Input", "Specialist Restored", "Ground Truth Clean"]
+    labels = {
+        "salt_and_pepper": "Salt & Pepper",
+        "gaussian_blur": "Gaussian Blur",
+        "occlusion": "Occlusion",
+    }
+
+    for row_idx, (corr, (corrupted, restored, clean)) in enumerate(samples.items()):
+        # Tensors: (3, H, W) in [0, 1]
+        imgs = [
+            corrupted.detach().cpu().permute(1, 2, 0).numpy().clip(0.0, 1.0),
+            restored.detach().cpu().permute(1, 2, 0).numpy().clip(0.0, 1.0),
+            clean.detach().cpu().permute(1, 2, 0).numpy().clip(0.0, 1.0),
+        ]
+
+        for col_idx, img in enumerate(imgs):
+            ax = axes[row_idx, col_idx]
+            ax.imshow(img)
+            ax.axis("off")
+            if row_idx == 0:
+                ax.set_title(col_titles[col_idx], fontweight="bold", pad=8)
+            if col_idx == 0:
+                ax.text(
+                    -0.1,
+                    0.5,
+                    labels.get(corr, corr),
+                    transform=ax.transAxes,
+                    rotation=90,
+                    va="center",
+                    ha="right",
+                    fontweight="bold",
+                    fontsize=11,
+                )
+
+    fig.tight_layout()
+    fig.savefig(save_path, dpi=150)
+    plt.close(fig)
+    return save_path
+

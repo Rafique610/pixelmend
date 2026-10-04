@@ -1,0 +1,116 @@
+{
+  "salt_and_pepper": {
+    "corruption_type": "salt_and_pepper",
+    "best_val_loss": 0.1574,
+    "best_metrics": {
+      "val_loss": 0.1574,
+      "val_psnr": 18.89,
+      "val_ssim": 0.4766,
+      "val_mae": 0.0877
+    },
+    "checkpoint_path": "checkpoints\\task2\\specialist_salt_best.pt",
+    "history": {
+      "train_loss": [
+        0.2495,
+        0.1782,
+        0.1626
+      ],
+      "val_loss": [
+        0.2506,
+        0.168,
+        0.1574
+      ],
+      "val_psnr": [
+        13.22,
+        17.83,
+        18.89
+      ],
+      "val_ssim": [
+        0.3667,
+        0.4592,
+        0.4766
+      ],
+      "val_mae": [
+        0.1777,
+        0.097,
+        0.0877
+      ]
+    }
+  },
+  "gaussian_blur": {
+    "corruption_type": "gaussian_blur",
+    "best_val_loss": 0.1745,
+    "best_metrics": {
+      "val_loss": 0.1745,
+      "val_psnr": 17.86,
+      "val_ssim": 0.442,
+      "val_mae": 0.1014
+    },
+    "checkpoint_path": "checkpoints\\task2\\specialist_blur_best.pt",
+    "history": {
+      "train_loss": [
+        0.2861,
+        0.204,
+        0.1706
+      ],
+      "val_loss": [
+        0.2919,
+        0.2166,
+        0.1745
+      ],
+      "val_psnr": [
+        12.13,
+        14.97,
+        17.86
+      ],
+      "val_ssim": [
+        0.3137,
+        0.4013,
+        0.442
+      ],
+      "val_mae": [
+        0.2168,
+        0.1438,
+        0.1014
+      ]
+    }
+  },
+  "occlusion": {
+    "corruption_type": "occlusion",
+    "best_val_loss": 0.1836,
+    "best_metrics": {
+      "val_loss": 0.1836,
+      "val_psnr": 17.1,
+      "val_ssim": 0.4235,
+      "val_mae": 0.1087
+    },
+    "checkpoint_path": "checkpoints\\task2\\specialist_occlusion_best.pt",
+    "history": {
+      "train_loss": [
+        0.2563,
+        0.2032,
+        0.1844
+      ],
+      "val_loss": [
+        0.3271,
+        0.2468,
+        0.1836
+      ],
+      "val_psnr": [
+        10.33,
+        13.83,
+        17.1
+      ],
+      "val_ssim": [
+        0.2841,
+        0.3554,
+        0.4235
+      ],
+      "val_mae": [
+        0.2531,
+        0.171,
+        0.1087
+      ]
+    }
+  }
+}

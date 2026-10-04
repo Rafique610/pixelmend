@@ -3,8 +3,9 @@
 # Maintained side-by-side on every step.
 # =============================================================================
 
-# --- Session Memory (Private / Local-only per INSTRUCTIONS.md) ---
+# --- Session Memory & Agent Scaffolds ---
 .memory/
+.agents/
 
 # --- Temporary Archives & PDFs ---
 *.zip
@@ -34,6 +35,8 @@ optuna/*.db-wal
 # --- MLflow Local Tracking Directory ---
 mlruns/
 .mlflow/
+mlflow.db*
+
 
 # --- Python Build, Cache & Environments ---
 __pycache__/

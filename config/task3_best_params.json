@@ -1,0 +1,21 @@
+{
+  "study_name": "task3-moe-joint",
+  "best_trial_number": 8,
+  "best_val_ssim": 0.7261,
+  "best_params": {
+    "fine_tune_lr": 1.7541893487450798e-05,
+    "temperature": 2.526366859545224,
+    "lambda_ce": 0.011439974749291277,
+    "lambda_balance": 0.06586289317583113,
+    "reconstruction_alpha": 0.6293899908000085
+  },
+  "derived_lambdas": {
+    "lambda_l1": 0.6294,
+    "lambda_ssim": 0.3706,
+    "lambda_ce": 0.0114,
+    "lambda_bal": 0.0659
+  },
+  "total_trials": 26,
+  "completed_trials": 13,
+  "pruned_trials": 12
+}

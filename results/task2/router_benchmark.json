@@ -1,0 +1,22 @@
+{
+  "device": "cpu",
+  "single_image": {
+    "mean_latency_ms": 32.252,
+    "std_latency_ms": 5.968,
+    "fps": 31.01,
+    "mean_classifier_ms": 4.743,
+    "mean_restoration_ms": 27.36
+  },
+  "batched": {
+    "batch_size": 16,
+    "mean_latency_ms": 397.574,
+    "std_latency_ms": 16.862,
+    "throughput_fps": 40.24
+  },
+  "per_branch_oracle_latency_ms": {
+    "clean": 0.162,
+    "salt_pepper": 26.425,
+    "blur": 27.323,
+    "occlusion": 29.753
+  }
+}

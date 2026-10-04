@@ -1,0 +1,17 @@
+{
+  "study_name": "task2-specialists",
+  "direction": "MINIMIZE",
+  "total_trials": 16,
+  "completed_trials": 11,
+  "pruned_trials": 5,
+  "best_trial_number": 5,
+  "best_value": 0.14353715380032858,
+  "best_params": {
+    "learning_rate": 0.00045745782054754043,
+    "bottleneck_dim": 128,
+    "channel_config": "standard",
+    "batch_size": 16,
+    "alpha": 0.95,
+    "use_residual": true
+  }
+}
